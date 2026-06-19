@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dagdag Kita Automation — Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0a0e14; --panel:#121823; --elev:#1a2230; --border:#243044;
+    --teal:#2dd4bf; --teal-dim:#14b8a6; --orange:#fb923c; --orange-dim:#f97316;
+    --text:#e6edf5; --muted:#8a99ad; --danger:#f87171;
+    --display:"Syne",system-ui,sans-serif; --body:"DM Sans",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:14px;display:flex;min-height:100vh}
+  ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
+  button{font-family:var(--body);cursor:pointer}input,textarea,select{font-family:var(--body)}
+  .side{width:230px;flex:0 0 230px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:100vh}
+  .brand{padding:22px 20px 16px;border-bottom:1px solid var(--border)}
+  .brand h1{font-family:var(--display);font-weight:800;font-size:20px;margin:0;line-height:1.1;background:linear-gradient(100deg,var(--teal),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand small{color:var(--muted);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  .nav{padding:10px;overflow:auto;flex:1}
+  .nav button{width:100%;text-align:left;background:transparent;border:0;color:var(--muted);padding:10px 12px;border-radius:9px;display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:500;margin-bottom:2px}
+  .nav button:hover{background:var(--elev);color:var(--text)}
+  .nav button.active{background:linear-gradient(100deg,rgba(45,212,191,.16),rgba(251,146,60,.12));color:var(--text)}
+  .nav .ico{width:18px;text-align:center;opacity:.9}
+  .nav button.locked{opacity:.45}.nav button.locked .lk{margin-left:auto;font-size:11px}
+  .side-foot{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px}
+  .side-foot button{flex:1;background:var(--elev);border:1px solid var(--border);color:var(--text);padding:8px;border-radius:8px;font-size:12px}
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .topbar{height:54px;flex:0 0 54px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:rgba(18,24,35,.6)}
+  .topbar .title{font-family:var(--display);font-weight:700;font-size:16px}
+  .badge{font-size:11px;color:var(--muted);background:var(--elev);border:1px solid var(--border);padding:4px 10px;border-radius:20px}
+  .badge b{color:var(--teal)}
+  .plan-badge{font-size:11px;padding:4px 11px;border-radius:20px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border)}
+  .plan-badge.trial{color:var(--orange);background:rgba(251,146,60,.1)}
+  .plan-badge.pro{color:#04120f;background:linear-gradient(100deg,var(--teal),var(--orange));border:0}
+  .view{flex:1;overflow:auto;padding:26px 28px}
+  .page{display:none;max-width:980px}.page.active{display:block}
+  .lead{color:var(--muted);margin:0 0 22px;max-width:640px;line-height:1.55}
+  h2.h{font-family:var(--display);font-weight:700;font-size:26px;margin:0 0 4px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:18px}
+  .card h3{font-family:var(--display);font-weight:600;font-size:15px;margin:0 0 14px}
+  label.f{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;font-weight:500}
+  .row{display:flex;gap:14px;flex-wrap:wrap}.col{flex:1;min-width:180px}
+  input.t,textarea.t,select.t{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 12px;font-size:13.5px;outline:none}
+  input.t:focus,textarea.t:focus,select.t:focus{border-color:var(--teal-dim)}
+  textarea.t{resize:vertical;line-height:1.5}.grp{margin-bottom:14px}
+  .btn{background:linear-gradient(100deg,var(--teal-dim),var(--orange-dim));border:0;color:#04120f;font-weight:600;padding:11px 18px;border-radius:10px;font-size:13.5px}
+  .btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{background:var(--elev);color:var(--text);border:1px solid var(--border)}
+  .btn.sm{padding:7px 12px;font-size:12px;border-radius:8px}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .out{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;white-space:pre-wrap;line-height:1.55;font-size:13px;min-height:60px;color:#cdd8e6}
+  .muted{color:var(--muted)}.copy{cursor:pointer;color:var(--teal);font-size:12px}
+  .pill{display:inline-block;background:var(--elev);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted);margin:0 6px 6px 0}
+  .scene{background:var(--bg);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:12px;position:relative}
+  .scene .sn{position:absolute;top:-9px;left:14px;background:var(--elev);border:1px solid var(--border);font-size:11px;color:var(--teal);padding:1px 9px;border-radius:10px;font-weight:600}
+  .scene .x{position:absolute;top:10px;right:10px;background:transparent;border:0;color:var(--muted);font-size:16px}
+  .thumb{width:54px;height:96px;object-fit:cover;border-radius:7px;border:1px solid var(--border);background:var(--elev)}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--elev);border:1px solid var(--border);padding:11px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:50;max-width:80%}
+  .toast.show{opacity:1}.toast.err{border-color:var(--danger);color:#fecaca}
+  canvas{max-width:100%;border:1px solid var(--border);border-radius:10px;background:#111}
+  .switch{display:inline-flex;align-items:center;gap:8px;font-size:13px}.switch input{width:16px;height:16px;accent-color:var(--teal)}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes s{to{transform:rotate(360deg)}}
+  a.dl{color:var(--teal);font-size:12px;text-decoration:none;border:1px solid var(--border);padding:5px 10px;border-radius:8px;display:inline-block;margin-top:6px}
+  .note{background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.25);border-radius:10px;padding:12px;font-size:12.5px;color:#bdeee7;margin-top:10px}
+  @media(max-width:760px){body{flex-direction:column}.side{width:100%;flex:none;min-height:auto}.nav{display:flex;flex-wrap:wrap}.nav button{width:auto}}
+</style>
+</head>
+<body>
+  <aside class="side">
+    <div class="brand"><h1>Dagdag Kita</h1><small>Automation · Web</small></div>
+    <nav class="nav" id="nav">
+      <button data-v="dash" class="active"><span class="ico">◆</span>Quick Create</button>
+      <button data-v="script"><span class="ico">✎</span>AI Script Builder</button>
+      <button data-v="video"><span class="ico">▶</span>Video Generator</button>
+      <button data-v="social"><span class="ico">▦</span>Social Post Creator</button>
+      <button data-v="youtube"><span class="ico">★</span>YouTube Toolkit</button>
+      <button data-v="character"><span class="ico">☻</span>Character Studio</button>
+      <button data-v="time"><span class="ico">◷</span>Post Time Converter</button>
+      <button data-v="license"><span class="ico">⬡</span>License &amp; Plan</button>
+      <button data-v="settings"><span class="ico">⚙</span>Settings</button>
+    </nav>
+    <div class="side-foot"><button id="saveProj">Save</button><button id="loadProj">Open</button></div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div class="title" id="vtitle">Quick Create</div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span class="plan-badge trial" id="planBadge">Trial</span>
+        <div class="badge">Engine <b id="engineBadge">not set</b></div>
+      </div>
+    </div>
+    <div class="view">
+      <section class="page active" data-p="dash">
+        <h2 class="h">Idea to finished content</h2>
+        <p class="lead">Drop an idea, generate a structured script, then push the scenes into the Video Generator. Runs entirely in your browser.</p>
+        <div class="card"><h3>Start a project</h3>
+          <div class="grp"><label class="f">Topic or idea</label><input class="t" id="q_topic" placeholder="e.g. 3 unsettling facts about deep sea creatures" /></div>
+          <div class="row">
+            <div class="col"><label class="f">Content type</label><select class="t" id="q_type"><option>Faceless YouTube</option><option>Shorts / Reels</option><option>Horror story</option><option>Motivational</option><option>Bible / Devotional</option><option>Facts / History</option><option>Educational</option></select></div>
+            <div class="col"><label class="f">Tone</label><select class="t" id="q_tone"><option>Cinematic</option><option>Conversational</option><option>Dramatic</option><option>Calm</option><option>Energetic</option></select></div>
+            <div class="col"><label class="f">Scenes</label><input class="t" id="q_scenes" type="number" value="6" min="2" max="20" /></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="q_go">Generate script &amp; load scenes</button></div>
+        </div>
+        <div class="card" id="q_outwrap" style="display:none"><h3>Generated script</h3><div class="out" id="q_out"></div>
+          <div class="btn-row"><button class="btn" id="q_send">Send to Video Generator →</button><button class="btn ghost sm" id="q_copy">Copy</button></div></div>
+      </section>
+
+      <section class="page" data-p="script">
+        <h2 class="h">AI Script Builder</h2>
+        <p class="lead">Build a structured script with hook, scenes, narration, image prompts and captions.</p>
+        <div class="card">
+          <div class="row">
+            <div class="col"><label class="f">Topic</label><input class="t" id="s_topic" placeholder="Your subject" /></div>
+            <div class="col"><label class="f">Hook style</label><select class="t" id="s_hook"><option>Question hook</option><option>Bold claim</option><option>Story cold-open</option><option>Shock fact</option><option>Countdown</option></select></div>
+          </div>
+          <div class="row">
+            <div class="col"><label class="f">Tone</label><select class="t" id="s_tone"><option>Cinematic</option><option>Conversational</option><option>Dramatic</option><option>Calm</option><option>Energetic</option></select></div>
+            <div class="col"><label class="f">Length</label><select class="t" id="s_len"><option>~30s Short</option><option>~60s Short</option><option>2–3 min</option><option>5–7 min</option></select></div>
+            <div class="col"><label class="f">Scenes</label><input class="t" id="s_scenes" type="number" value="6" min="2" max="24" /></div>
+          </div>
+          <div class="grp"><label class="f">Extra direction (optional)</label><textarea class="t" id="s_extra" rows="2"></textarea></div>
+          <div class="btn-row"><button class="btn" id="s_go">Generate script</button><button class="btn ghost" id="s_prompt">Copy prompt only</button></div>
+        </div>
+        <div class="card"><h3>Script <span class="copy" id="s_copy">copy</span></h3><div class="out" id="s_out">Your script will appear here.</div>
+          <div class="btn-row"><button class="btn ghost sm" id="s_send">Send to Video Generator →</button><button class="btn ghost sm" id="s_export">Export .txt</button></div></div>
+      </section>
+
+      <section class="page" data-p="video">
+        <h2 class="h">Video Generator</h2>
+        <p class="lead">Each scene gets an AI image and (with a fal.ai key) becomes a moving clip. Download the clips and assemble in CapCut, or use them as-is.</p>
+        <div class="card"><h3>Output</h3>
+          <div class="row">
+            <div class="col"><label class="f">Aspect</label><select class="t" id="v_aspect"><option value="portrait">Portrait 9:16</option><option value="landscape">Landscape 16:9</option><option value="square">Square 1:1</option></select></div>
+            <div class="col"><label class="f">AI motion model (fal.ai)</label><select class="t" id="v_model">
+              <option value="fal-ai/ltx-video/image-to-video">LTX Video — cheapest (~$0.02/clip)</option>
+              <option value="fal-ai/kling-video/v2.5-turbo/pro/image-to-video">Kling 2.5 Turbo (~$0.07/s)</option>
+              <option value="fal-ai/veo3.1/image-to-video">Veo 3.1 — premium (~$0.20/s)</option>
+            </select></div>
+          </div>
+          <div class="note">Tip: tap a scene's voice button to hear the narration with your device voice. AI motion needs a fal.ai key (Settings) and is Pro.</div>
+        </div>
+        <div class="card"><h3>Scenes</h3><div id="v_scenes"></div>
+          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn" id="v_animall">Animate all (fal.ai · Pro)</button></div>
+        </div>
+      </section>
+
+      <section class="page" data-p="social">
+        <h2 class="h">Social Post Creator</h2>
+        <p class="lead">AI background, sharp local text. Quote posts, verse graphics, promos.</p>
+        <div class="card">
+          <div class="grp"><label class="f">Quote / text</label><textarea class="t" id="p_text" rows="3">Discipline is the bridge between goals and results.</textarea></div>
+          <div class="row">
+            <div class="col"><label class="f">Footer / handle</label><input class="t" id="p_footer" placeholder="@yourpage" /></div>
+            <div class="col"><label class="f">Size</label><select class="t" id="p_size"><option value="1080x1080">Square 1080</option><option value="1080x1350">Portrait 4:5</option><option value="1080x1920">Story 9:16</option></select></div>
+          </div>
+          <div class="grp"><label class="f">Background prompt</label><input class="t" id="p_bg" value="dark moody abstract texture, cinematic, soft gradient" /></div>
+          <div class="btn-row"><button class="btn" id="p_gen">Generate background</button><button class="btn ghost" id="p_render">Render text</button><button class="btn ghost" id="p_save">Download PNG</button></div>
+        </div>
+        <div class="card"><canvas id="p_canvas" width="1080" height="1080" style="width:340px"></canvas></div>
+      </section>
+
+      <section class="page" data-p="youtube">
+        <h2 class="h">YouTube Toolkit</h2>
+        <p class="lead">Titles, description, hashtags, SEO keywords, thumbnail prompt, pinned comment.</p>
+        <div class="card"><div class="grp"><label class="f">Video topic / summary</label><textarea class="t" id="y_topic" rows="3"></textarea></div>
+          <div class="btn-row"><button class="btn" id="y_go">Generate publishing kit</button></div></div>
+        <div class="card"><h3>Kit <span class="copy" id="y_copy">copy</span></h3><div class="out" id="y_out">Your titles, description, tags and more will appear here.</div>
+          <div class="btn-row"><button class="btn ghost sm" id="y_export">Export .txt</button></div></div>
+      </section>
+
+      <section class="page" data-p="character">
+        <h2 class="h">Character Studio</h2>
+        <p class="lead">Save character profiles for consistent storytelling.</p>
+        <div class="card">
+          <div class="row"><div class="col"><label class="f">Name</label><input class="t" id="c_name" /></div><div class="col"><label class="f">Role</label><input class="t" id="c_role" /></div></div>
+          <div class="grp"><label class="f">Appearance &amp; vibe</label><textarea class="t" id="c_look" rows="2"></textarea></div>
+          <div class="grp"><label class="f">Personality / voice</label><textarea class="t" id="c_pers" rows="2"></textarea></div>
+          <div class="btn-row"><button class="btn" id="c_save">Save character</button><button class="btn ghost" id="c_ai">AI-expand profile</button></div>
+        </div>
+        <div class="card"><h3>Saved characters</h3><div id="c_list" class="muted">None yet.</div></div>
+      </section>
+
+      <section class="page" data-p="time">
+        <h2 class="h">Post Time Converter</h2>
+        <p class="lead">Plan posting across time zones.</p>
+        <div class="card"><div class="row">
+          <div class="col"><label class="f">Your local time</label><input class="t" id="t_time" type="time" value="18:00" /></div>
+          <div class="col"><label class="f">Your time zone</label><select class="t" id="t_zone"></select></div>
+        </div><div class="btn-row"><button class="btn" id="t_go">Convert</button></div></div>
+        <div class="card"><h3>Audience times</h3><div id="t_out" class="muted">Pick a time and convert.</div></div>
+      </section>
+
+      <section class="page" data-p="license">
+        <h2 class="h">License &amp; Plan</h2>
+        <p class="lead">Activate with your key to unlock Pro features. Verified locally in your browser.</p>
+        <div class="card"><h3>Current plan: <span id="lic_plan" style="color:var(--teal)">Trial</span></h3>
+          <div id="lic_meta" class="muted" style="margin-bottom:12px"></div>
+          <label class="f">License key</label>
+          <div class="row"><div class="col"><input class="t" id="lic_key" placeholder="DK1.xxxxx.xxxxx" /></div>
+            <div style="display:flex;align-items:flex-end;gap:8px"><button class="btn" id="lic_go">Activate</button><button class="btn ghost" id="lic_off">Deactivate</button></div></div>
+        </div>
+      </section>
+
+      <section class="page" data-p="settings">
+        <h2 class="h">Settings</h2>
+        <p class="lead">Bring your own free keys. Images and your device voice need no key.</p>
+        <div class="card"><h3>API keys (stored only in this browser)</h3>
+          <div class="grp"><label class="f">Google Gemini API key <span class="muted">(free · aistudio.google.com)</span></label><input class="t" id="k_gemini" type="password" placeholder="AIza…" /></div>
+          <div class="grp"><label class="f">OpenRouter API key <span class="muted">(optional · openrouter.ai)</span></label><input class="t" id="k_openrouter" type="password" placeholder="sk-or-…" /></div>
+          <div class="grp"><label class="f">fal.ai API key <span class="muted">(AI Video · fal.ai, pay-per-use)</span></label><input class="t" id="k_fal" type="password" placeholder="fal key…" /></div>
+          <div class="btn-row"><button class="btn" id="saveSettings">Save settings</button></div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="toast" id="toast"></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+let store={geminiKey:"",openrouterKey:"",falKey:""};
+let characters=[]; let scenes=[]; let LIC={plan:"trial",trial:true}; let FEAT={};
+const PUB_PEM="MCowBQYDK2VwAyEAGVPWCJ83TDctfHcBbpzQbPQeuUCquNRHlpIC7F0Tfvk=";
+const PLAN={trial:{video:1,social:0,youtube:0,character:0,premium:0},pro:{video:1,social:1,youtube:1,character:1,premium:1}};
+const NAVF={social:"social",youtube:"youtube",character:"character"};
+
+function toast(m,e){const t=$("#toast");t.textContent=m;t.className="toast show"+(e?" err":"");setTimeout(()=>t.className="toast",e?4200:2400);}
+function busy(b,on,l){if(!b)return;if(on){b.dataset.t=b.innerHTML;b.disabled=true;b.innerHTML='<span class="spin"></span>'+(l||"Working…");}else{b.disabled=false;b.innerHTML=b.dataset.t;}}
+function loadStore(){try{store=JSON.parse(localStorage.getItem("dk_store"))||store;}catch(_){}characters=JSON.parse(localStorage.getItem("dk_chars")||"[]");}
+function saveStore(){localStorage.setItem("dk_store",JSON.stringify(store));localStorage.setItem("dk_chars",JSON.stringify(characters));}
+
+/* nav */
+function navTo(v){const b=$$("#nav button").find(x=>x.dataset.v===v);if(!b)return;
+  $$("#nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");
+  $$(".page").forEach(p=>p.classList.toggle("active",p.dataset.p===v));
+  $("#vtitle").textContent=b.textContent.replace(/🔒|⬡|◷|⚙|◆|✎|▶|▦|★|☻/g,"").trim();}
+$$("#nav button").forEach(b=>b.onclick=()=>{const v=b.dataset.v,fk=NAVF[v];
+  if(fk&&!FEAT[fk]){toast("That's a Pro feature — activate to unlock",true);navTo("license");return;}navTo(v);});
+
+/* settings */
+function fillSettings(){$("#k_gemini").value=store.geminiKey||"";$("#k_openrouter").value=store.openrouterKey||"";$("#k_fal").value=store.falKey||"";refreshBadge();}
+function refreshBadge(){$("#engineBadge").textContent=store.geminiKey?"gemini":store.openrouterKey?"openrouter":"not set";}
+$("#saveSettings").onclick=()=>{store.geminiKey=$("#k_gemini").value.trim();store.openrouterKey=$("#k_openrouter").value.trim();store.falKey=$("#k_fal").value.trim();saveStore();refreshBadge();toast("Settings saved");};
+
+/* AI text — current free Gemini 2.5 models with 429 backoff-retry, then OpenRouter fallback */
+const GEM_MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite"];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function geminiOnce(model,prompt){
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${store.geminiKey}`,
+    {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+  if(r.status===429){const e=new Error("rate");e.rate=true;throw e;}
+  if(!r.ok){let d="";try{d=(await r.json())?.error?.message||"";}catch(_){}throw new Error("Gemini "+r.status+(d?": "+d.slice(0,120):""));}
+  const j=await r.json();return j.candidates?.[0]?.content?.parts?.map(p=>p.text).join("")||"";
+}
+async function geminiAI(prompt){
+  let lastErr;
+  for(const model of GEM_MODELS){
+    for(let attempt=0;attempt<3;attempt++){
+      try{return await geminiOnce(model,prompt);}
+      catch(e){lastErr=e;if(e.rate){await sleep(1200*(attempt+1)+Math.random()*500);continue;}break;}
+    }
+  }
+  throw lastErr||new Error("Gemini failed");
+}
+async function openrouterAI(prompt){
+  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",
+    {method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+store.openrouterKey},
+     body:JSON.stringify({model:"deepseek/deepseek-chat-v3-0324:free",messages:[{role:"user",content:prompt}]})});
+  if(!r.ok)throw new Error("OpenRouter "+r.status);
+  const j=await r.json();return j.choices?.[0]?.message?.content||"";
+}
+async function ai(prompt,btn,label){
+  busy(btn,true,label);
+  try{
+    if(store.geminiKey){
+      try{return await geminiAI(prompt);}
+      catch(e){
+        if(store.openrouterKey){toast("Gemini limited — switching to OpenRouter…");return await openrouterAI(prompt);}
+        if(e.rate)throw new Error("Gemini hit its free-tier limit (429). Wait ~60s and retry, or add an OpenRouter key in Settings as automatic backup.");
+        throw e;
+      }
+    }
+    if(store.openrouterKey)return await openrouterAI(prompt);
+    throw new Error("No AI key set — add a free Gemini key in Settings.");
+  }catch(e){toast(e.message,true);throw e;}finally{busy(btn,false);}
+}
+
+/* images — Pollinations (free) */
+function imgUrl(prompt,w,h){return "https://image.pollinations.ai/prompt/"+encodeURIComponent(prompt)+`?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*1e6)}&model=flux`;}
+
+/* script prompt */
+function scriptPrompt(o){return `You are a professional short-form scriptwriter. Write a ${o.len} ${o.tone.toLowerCase()} script about: "${o.topic}". Use a ${o.hook.toLowerCase()} opening hook. Exactly ${o.scenes} scenes. ${o.extra?("Extra: "+o.extra):""}
+For EACH scene output exactly this block, nothing else:
+SCENE n
+NARRATION: <1-2 spoken sentences>
+IMAGE: <vivid AI image prompt, no text in image>
+CAPTION: <on-screen caption, max 8 words>
+No intros, summaries or markdown.`;}
+function scOpts(){return{topic:$("#s_topic").value||"a trending topic",hook:$("#s_hook").value,tone:$("#s_tone").value,len:$("#s_len").value,scenes:+$("#s_scenes").value,extra:$("#s_extra").value};}
+$("#s_prompt").onclick=()=>{copy(scriptPrompt(scOpts()));toast("Prompt copied");};
+$("#s_go").onclick=async e=>{$("#s_out").textContent=await ai(scriptPrompt(scOpts()),e.target,"Writing…");};
+$("#s_copy").onclick=()=>{copy($("#s_out").textContent);toast("Copied");};
+$("#s_send").onclick=()=>{parseScenes($("#s_out").textContent);go("video");};
+$("#s_export").onclick=()=>dl("script.txt",$("#s_out").textContent);
+
+$("#q_go").onclick=async e=>{const o={topic:$("#q_topic").value||"a trending idea",hook:"Question hook",tone:$("#q_tone").value,len:($("#q_type").value.match(/Short|Reels/)?"~45s Short":"2–3 min"),scenes:+$("#q_scenes").value,extra:"Content type: "+$("#q_type").value};
+  $("#q_out").textContent=await ai(scriptPrompt(o),e.target,"Generating…");$("#q_outwrap").style.display="block";};
+$("#q_copy").onclick=()=>{copy($("#q_out").textContent);toast("Copied");};
+$("#q_send").onclick=()=>{parseScenes($("#q_out").textContent);go("video");};
+
+/* scenes */
+function blank(){return{narration:"",imagePrompt:"",caption:"",imageUrl:"",videoUrl:""};}
+function esc(s){return (s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;");}
+function dims(){const a=$("#v_aspect").value;return a==="landscape"?[1920,1080]:a==="square"?[1080,1080]:[1080,1920];}
+function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
+  if(!scenes.length){w.innerHTML='<div class="muted">No scenes yet. Generate a script, or add one.</div>';return;}
+  scenes.forEach((s,i)=>{const d=document.createElement("div");d.className="scene";
+    d.innerHTML=`<span class="sn">SCENE ${i+1}</span><button class="x" data-x="${i}">×</button>
+      <div class="row"><div style="flex:0 0 auto"><img class="thumb" data-th="${i}" src="${s.imageUrl||""}" alt=""/></div>
+      <div class="col">
+        <div class="grp"><label class="f">Narration</label><textarea class="t" rows="2" data-n="${i}">${esc(s.narration)}</textarea></div>
+        <div class="grp"><label class="f">Image prompt</label><input class="t" data-ip="${i}" value="${esc(s.imagePrompt)}"/></div>
+        <div class="row"><div class="col"><label class="f">Caption</label><input class="t" data-cp="${i}" value="${esc(s.caption)}"/></div>
+        <div class="col" style="display:flex;align-items:flex-end;gap:6px">
+          <button class="btn ghost sm" data-img="${i}">Image</button>
+          <button class="btn ghost sm" data-say="${i}">▶ Voice</button>
+          <button class="btn ghost sm" data-anim="${i}">Animate</button>
+        </div></div>
+        <div data-clip="${i}">${s.videoUrl?`<a class="dl" href="${s.videoUrl}" target="_blank" download>↓ Download clip ${i+1}</a>`:""}</div>
+      </div></div>`;
+    w.appendChild(d);});
+  $$('[data-n]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.n].narration=e.target.value);
+  $$('[data-ip]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.ip].imagePrompt=e.target.value);
+  $$('[data-cp]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.cp].caption=e.target.value);
+  $$('[data-x]',w).forEach(b=>b.onclick=e=>{scenes.splice(+e.target.dataset.x,1);renderScenes();});
+  $$('[data-img]',w).forEach(b=>b.onclick=e=>genImg(+e.target.dataset.img,e.target));
+  $$('[data-say]',w).forEach(b=>b.onclick=e=>say(scenes[+e.target.dataset.say].narration));
+  $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
+}
+function genImg(i,btn){const s=scenes[i];const p=s.imagePrompt||s.narration;if(!p){toast("Add an image prompt",true);return;}
+  const[W,H]=dims();s.imageUrl=imgUrl(p,W,H);const th=$(`[data-th="${i}"]`);if(th)th.src=s.imageUrl;toast("Image loading…");}
+$("#v_add").onclick=()=>{scenes.push(blank());renderScenes();};
+$("#v_imgall").onclick=()=>{scenes.forEach((s,i)=>genImg(i));renderScenes();toast("Images loading");};
+
+function say(text){if(!text){toast("No narration",true);return;}try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);speechSynthesis.speak(u);}catch(_){toast("Voice not available",true);}}
+
+function parseScenes(text){scenes=[];const blocks=text.split(/SCENE\s*\d+/i).map(b=>b.trim()).filter(Boolean);
+  for(const b of blocks){const n=(b.match(/NARRATION:\s*([\s\S]*?)(?:\n[A-Z ]+:|$)/i)||[])[1];const im=(b.match(/IMAGE:\s*([\s\S]*?)(?:\n[A-Z ]+:|$)/i)||[])[1];const c=(b.match(/CAPTION:\s*([\s\S]*?)(?:\n[A-Z ]+:|$)/i)||[])[1];
+    if(n||im)scenes.push({narration:(n||"").trim(),imagePrompt:(im||"").trim(),caption:(c||"").trim(),imageUrl:"",videoUrl:""});}
+  if(!scenes.length)text.split(/(?<=[.!?])\s+/).filter(s=>s.trim().length>4).slice(0,12).forEach(s=>scenes.push({narration:s.trim(),imagePrompt:s.trim(),caption:s.trim().slice(0,40),imageUrl:"",videoUrl:""}));
+  renderScenes();}
+function go(v){$$("#nav button").find(b=>b.dataset.v===v).click();toast(scenes.length+" scenes loaded");}
+
+/* fal.ai image-to-video (browser) */
+async function imageToDataUri(url){const r=await fetch(url);const b=await r.blob();return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(b);});}
+async function falClip(model,prompt,imageDataUri){
+  const key=store.falKey;if(!key)throw new Error("Add a fal.ai key in Settings for AI motion.");
+  const h={"Content-Type":"application/json",Authorization:"Key "+key};
+  const sub=await fetch("https://queue.fal.run/"+model,{method:"POST",headers:h,body:JSON.stringify({prompt,image_url:imageDataUri})});
+  if(!sub.ok)throw new Error("fal "+sub.status+": "+(await sub.text()).slice(0,200));
+  const job=await sub.json();const deadline=Date.now()+6*60*1000;
+  while(Date.now()<deadline){await new Promise(r=>setTimeout(r,3000));
+    const st=await fetch(job.status_url,{headers:h});if(!st.ok)continue;const sj=await st.json();
+    if(sj.status==="COMPLETED")break;if(sj.status==="FAILED"||sj.status==="ERROR")throw new Error("fal generation failed");}
+  const res=await fetch(job.response_url,{headers:h});const rj=await res.json();
+  return rj.video?.url||rj.video_url||(rj.videos&&rj.videos[0]?.url);
+}
+async function animate(i,btn){if(!FEAT.premium){toast("AI motion is Pro — activate to unlock",true);navTo("license");return;}
+  const s=scenes[i];if(!s.imageUrl)genImg(i);if(!s.imageUrl){toast("Generate the image first",true);return;}
+  busy(btn,true,"Animating…");
+  try{const di=await imageToDataUri(s.imageUrl);const url=await falClip($("#v_model").value,(s.imagePrompt||s.narration||"natural motion")+". Natural cinematic motion.",di);
+    s.videoUrl=url;const c=$(`[data-clip="${i}"]`);if(c)c.innerHTML=`<a class="dl" href="${url}" target="_blank" download>↓ Download clip ${i+1}</a>`;toast("Clip ready");}
+  catch(e){toast(e.message,true);}finally{busy(btn,false);}}
+$("#v_animall").onclick=async e=>{if(!FEAT.premium){toast("AI motion is Pro",true);navTo("license");return;}
+  busy(e.target,true,"Animating…");for(let i=0;i<scenes.length;i++){try{await animate(i,null);}catch(_){}}busy(e.target,false);toast("Done — download each clip and assemble in CapCut");};
+
+/* social post */
+let bg=null;
+$("#p_gen").onclick=e=>{const[W,H]=$("#p_size").value.split("x").map(Number);busy(e.target,true,"Loading bg…");
+  bg=new Image();bg.crossOrigin="anonymous";bg.onload=()=>{drawPost();busy(e.target,false);};bg.onerror=()=>{busy(e.target,false);toast("Background failed",true);};bg.src=imgUrl($("#p_bg").value,W,H);};
+$("#p_render").onclick=()=>drawPost();
+function drawPost(){const[W,H]=$("#p_size").value.split("x").map(Number);const cv=$("#p_canvas");cv.width=W;cv.height=H;const x=cv.getContext("2d");
+  x.fillStyle="#0a0e14";x.fillRect(0,0,W,H);if(bg)try{x.drawImage(bg,0,0,W,H);}catch(_){}
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,"rgba(10,14,20,.35)");g.addColorStop(1,"rgba(10,14,20,.85)");x.fillStyle=g;x.fillRect(0,0,W,H);
+  const text=$("#p_text").value.trim();x.fillStyle="#fff";x.textAlign="center";x.textBaseline="middle";
+  let sz=Math.round(W/12);x.font=`700 ${sz}px "DM Sans",sans-serif`;const words=text.split(/\s+/),lines=[];let line="";const maxW=W*.82;
+  for(const wd of words){const t=line?line+" "+wd:wd;if(x.measureText(t).width>maxW&&line){lines.push(line);line=wd;}else line=t;}if(line)lines.push(line);
+  const lh=sz*1.25,sy=H/2-(lines.length-1)*lh/2;x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=12;lines.forEach((l,i)=>x.fillText(l,W/2,sy+i*lh));x.shadowBlur=0;
+  const f=$("#p_footer").value.trim();if(f){x.font=`600 ${Math.round(W/34)}px "DM Sans",sans-serif`;const gg=x.createLinearGradient(W/2-100,0,W/2+100,0);gg.addColorStop(0,"#2dd4bf");gg.addColorStop(1,"#fb923c");x.fillStyle=gg;x.fillText(f,W/2,H-H*.07);}}
+$("#p_save").onclick=()=>{try{const a=document.createElement("a");a.download="post.png";a.href=$("#p_canvas").toDataURL("image/png");a.click();}catch(_){toast("Render a background first, then save",true);}};
+
+/* youtube */
+$("#y_go").onclick=async e=>{const t=$("#y_topic").value||"my video";
+  $("#y_out").textContent=await ai(`For a YouTube video about "${t}", produce a publishing kit as plain text with sections: 5 TITLES, DESCRIPTION (2 paragraphs), 15 HASHTAGS, 15 SEO KEYWORDS (comma separated), THUMBNAIL PROMPT, PINNED COMMENT, SHORTS CAPTION. No markdown.`,e.target,"Packaging…");};
+$("#y_copy").onclick=()=>{copy($("#y_out").textContent);toast("Copied");};
+$("#y_export").onclick=()=>dl("youtube-kit.txt",$("#y_out").textContent);
+
+/* character */
+function renderChars(){const el=$("#c_list");if(!characters.length){el.innerHTML='<span class="muted">None yet.</span>';return;}
+  el.innerHTML=characters.map((c,i)=>`<div class="scene" style="margin-top:8px"><button class="x" data-cx="${i}">×</button><b>${esc(c.name)}</b> <span class="pill">${esc(c.role||"—")}</span><br><span class="muted">${esc(c.look||"")}</span></div>`).join("");
+  $$('[data-cx]',el).forEach(b=>b.onclick=e=>{characters.splice(+e.target.dataset.cx,1);saveStore();renderChars();});}
+$("#c_save").onclick=()=>{const c={name:$("#c_name").value.trim(),role:$("#c_role").value.trim(),look:$("#c_look").value.trim(),pers:$("#c_pers").value.trim()};if(!c.name){toast("Name required",true);return;}characters.push(c);saveStore();renderChars();toast("Saved");$("#c_name").value=$("#c_role").value=$("#c_look").value=$("#c_pers").value="";};
+$("#c_ai").onclick=async e=>{$("#c_pers").value=await ai(`Expand this character into a vivid profile (appearance, personality, signature visual details for consistent AI image generation). Name: ${$("#c_name").value}. Notes: ${$("#c_look").value} ${$("#c_pers").value}. Under 120 words.`,e.target,"Expanding…");};
+
+/* time */
+const ZONES=[["America/Los_Angeles","Los Angeles"],["America/New_York","New York"],["Europe/London","London"],["Europe/Berlin","Berlin"],["Asia/Manila","Manila"],["Asia/Singapore","Singapore"],["Asia/Dubai","Dubai"],["Asia/Tokyo","Tokyo"],["Australia/Sydney","Sydney"],["Asia/Kolkata","India"]];
+$("#t_zone").innerHTML=ZONES.map(([z,n])=>`<option value="${z}">${n}</option>`).join("");try{$("#t_zone").value=Intl.DateTimeFormat().resolvedOptions().timeZone;}catch(_){}
+$("#t_go").onclick=()=>{const[h,m]=$("#t_time").value.split(":").map(Number);const fz=$("#t_zone").value;const now=new Date();let g=new Date(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate(),h,m));
+  for(let i=0;i<3;i++){const got=zp(g,fz);g=new Date(g.getTime()+((h*60+m)-(got.h*60+got.m))*60000);}
+  $("#t_out").innerHTML=ZONES.map(([z,n])=>{const p=zp(g,z);const hh=((p.h+11)%12)+1;const ap=p.h<12?"AM":"PM";return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span>${n}</span><b>${hh}:${String(p.m).padStart(2,"0")} ${ap}</b></div>`;}).join("");};
+function zp(d,z){const f=new Intl.DateTimeFormat("en-US",{timeZone:z,hour12:false,hour:"2-digit",minute:"2-digit"}).formatToParts(d);return{h:+f.find(p=>p.type==="hour").value%24,m:+f.find(p=>p.type==="minute").value};}
+
+/* license — Web Crypto Ed25519 verify */
+function b64urlToBytes(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";const bin=atob(s);const a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return a;}
+async function verifyKey(key){try{const[tag,p,sig]=String(key||"").split(".");if(tag!=="DK1"||!p||!sig)return null;
+  const pub=await crypto.subtle.importKey("spki",b64urlToBytes(PUB_PEM),{name:"Ed25519"},false,["verify"]);
+  const data=b64urlToBytes(p);const ok=await crypto.subtle.verify("Ed25519",pub,b64urlToBytes(sig),data);
+  if(!ok)return null;const payload=JSON.parse(new TextDecoder().decode(data));if(!PLAN[payload.plan])return null;return payload;}catch(e){return null;}}
+async function loadLicense(){const key=localStorage.getItem("dk_license")||"";const p=await verifyKey(key);
+  if(!p||(p.exp&&Date.now()>p.exp)){LIC={plan:"trial",trial:true};}else{LIC={plan:p.plan,trial:false,email:p.email,exp:p.exp};}
+  FEAT=PLAN[LIC.plan];
+  $("#lic_plan").textContent=LIC.trial?"Trial":LIC.plan[0].toUpperCase()+LIC.plan.slice(1);
+  $("#lic_meta").textContent=LIC.trial?"No active key — Trial. Pro unlocks Social, YouTube, Character Studio and AI motion.":("Licensed to "+(LIC.email||"you")+(LIC.exp&&LIC.exp<4e12?" · expires "+new Date(LIC.exp).toDateString():" · lifetime"));
+  const pb=$("#planBadge");pb.className="plan-badge "+(LIC.trial?"trial":"pro");pb.textContent=LIC.trial?"Trial":LIC.plan;
+  applyGating();}
+function applyGating(){$$("#nav button").forEach(b=>{const fk=NAVF[b.dataset.v];const locked=fk&&!FEAT[fk];b.classList.toggle("locked",!!locked);
+  let lk=b.querySelector(".lk");if(locked&&!lk){lk=document.createElement("span");lk.className="lk";lk.textContent="🔒";b.appendChild(lk);}if(!locked&&lk)lk.remove();});}
+$("#lic_go").onclick=async e=>{const key=$("#lic_key").value.trim();if(!key){toast("Paste a key",true);return;}busy(e.target,true,"Activating…");
+  const p=await verifyKey(key);busy(e.target,false);if(!p){toast("Invalid key",true);return;}if(p.exp&&Date.now()>p.exp){toast("Key expired",true);return;}
+  localStorage.setItem("dk_license",key);$("#lic_key").value="";await loadLicense();toast("Activated: "+p.plan.toUpperCase());};
+$("#lic_off").onclick=async()=>{localStorage.removeItem("dk_license");await loadLicense();toast("Back to Trial");};
+
+/* projects */
+function dl(name,text){const a=document.createElement("a");a.download=name;a.href=URL.createObjectURL(new Blob([text],{type:"text/plain"}));a.click();}
+$("#saveProj").onclick=()=>{const data={scenes,characters,script:$("#s_out").textContent,social:{text:$("#p_text").value,footer:$("#p_footer").value,bg:$("#p_bg").value}};
+  const a=document.createElement("a");a.download="project.dkproj";a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.click();};
+$("#loadProj").onclick=()=>{const inp=document.createElement("input");inp.type="file";inp.accept=".dkproj,.json";inp.onchange=()=>{const f=inp.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{try{const d=JSON.parse(fr.result);scenes=d.scenes||[];characters=d.characters||[];if(d.script)$("#s_out").textContent=d.script;if(d.social){$("#p_text").value=d.social.text||"";$("#p_footer").value=d.social.footer||"";$("#p_bg").value=d.social.bg||"";}saveStore();renderScenes();renderChars();toast("Project loaded");}catch(_){toast("Bad file",true);}};fr.readAsText(f);};inp.click();};
+
+function copy(t){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(_){}ta.remove();}
+
+/* init */
+loadStore();fillSettings();renderScenes();renderChars();drawPost();loadLicense();
+</script>
+</body>
+</html>
