@@ -140,15 +140,16 @@
           <div class="row">
             <div class="col"><label class="f">Aspect</label><select class="t" id="v_aspect"><option value="portrait">Portrait 9:16</option><option value="landscape">Landscape 16:9</option><option value="square">Square 1:1</option></select></div>
             <div class="col"><label class="f">AI motion model (fal.ai)</label><select class="t" id="v_model">
-              <option value="fal-ai/ltx-video/image-to-video">LTX Video — cheapest (~$0.02/clip)</option>
-              <option value="fal-ai/kling-video/v2.5-turbo/pro/image-to-video">Kling 2.5 Turbo (~$0.07/s)</option>
-              <option value="fal-ai/veo3.1/image-to-video">Veo 3.1 — premium (~$0.20/s)</option>
+              <option value="fal-ai/kling-video/v2.5-turbo/pro/image-to-video">Kling 2.5 Turbo — best value (~$0.07/s · ~$4/min)</option>
+              <option value="fal-ai/ltx-video/image-to-video">LTX Video — cheapest (~$0.02/s · ~$1–2/min)</option>
+              <option value="fal-ai/minimax/hailuo-2.3/standard/image-to-video">Hailuo 2.3 — mid (~$0.10/s · ~$6/min)</option>
+              <option value="fal-ai/veo3.1/image-to-video">Veo 3.1 — premium, native audio (~$0.20/s · ~$12/min)</option>
             </select></div>
           </div>
-          <div class="note">Tip: tap a scene's voice button to hear the narration with your device voice. AI motion needs a fal.ai key (Settings) and is Pro.</div>
+          <div class="note">Cost is billed to your own fal.ai key. For Shorts/Reels/TikTok use Portrait + a value model; 720p is fine (those apps compress anyway). 1080p ≈ 1.5× the price.</div>
         </div>
         <div class="card"><h3>Scenes</h3><div id="v_scenes"></div>
-          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn" id="v_animall">Animate all (fal.ai · Pro)</button></div>
+          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_animall">Animate all (fal.ai · Pro)</button></div>
         </div>
       </section>
 
@@ -165,6 +166,12 @@
           <div class="btn-row"><button class="btn" id="p_gen">Generate background</button><button class="btn ghost" id="p_render">Render text</button><button class="btn ghost" id="p_save">Download PNG</button></div>
         </div>
         <div class="card"><canvas id="p_canvas" width="1080" height="1080" style="width:340px"></canvas></div>
+        <div class="card"><h3>Caption &amp; hashtags <span class="copy" id="cap_copy">copy</span></h3>
+          <div class="row"><div class="col"><label class="f">Platform</label><select class="t" id="cap_plat"><option>Instagram</option><option>TikTok</option><option>Facebook</option><option>YouTube Shorts</option><option>X / Twitter</option><option>LinkedIn</option></select></div>
+          <div class="col"><label class="f">What the post is about</label><input class="t" id="cap_topic" placeholder="e.g. discipline &amp; consistency" /></div></div>
+          <div class="btn-row"><button class="btn" id="cap_go">Generate caption + hashtags</button></div>
+          <div class="out" id="cap_out" style="margin-top:12px">Your caption, hook and hashtags will appear here.</div>
+        </div>
       </section>
 
       <section class="page" data-p="youtube">
@@ -213,10 +220,17 @@
         <h2 class="h">Settings</h2>
         <p class="lead">Bring your own free keys. Images and your device voice need no key.</p>
         <div class="card"><h3>API keys (stored only in this browser)</h3>
-          <div class="grp"><label class="f">Google Gemini API key <span class="muted">(free · aistudio.google.com)</span></label><input class="t" id="k_gemini" type="password" placeholder="AIza…" /></div>
-          <div class="grp"><label class="f">OpenRouter API key <span class="muted">(optional · openrouter.ai)</span></label><input class="t" id="k_openrouter" type="password" placeholder="sk-or-…" /></div>
-          <div class="grp"><label class="f">fal.ai API key <span class="muted">(AI Video · fal.ai, pay-per-use)</span></label><input class="t" id="k_fal" type="password" placeholder="fal key…" /></div>
+          <div class="grp"><label class="f">Google Gemini API key <span class="muted">(free · aistudio.google.com/apikey)</span></label><input class="t" id="k_gemini" type="password" placeholder="AIza…" /></div>
+          <div class="grp"><label class="f">Pollinations API key <span class="muted">(FREE · enter.pollinations.ai — unlocks HQ images, voiceovers &amp; backup text)</span></label><input class="t" id="k_poll" type="password" placeholder="pk_…" /></div>
+          <div class="grp"><label class="f">OpenRouter API key <span class="muted">(optional backup · openrouter.ai/keys)</span></label><input class="t" id="k_openrouter" type="password" placeholder="sk-or-…" /></div>
+          <div class="grp"><label class="f">fal.ai API key <span class="muted">(premium AI Video · fal.ai, pay-per-use)</span></label><input class="t" id="k_fal" type="password" placeholder="fal key…" /></div>
+          <div class="row">
+            <div class="col"><label class="f">Voiceover voice <span class="muted">(needs Pollinations key)</span></label><select class="t" id="k_voice">
+              <option value="nova">Nova — warm female</option><option value="onyx">Onyx — deep male</option><option value="shimmer">Shimmer — bright female</option><option value="echo">Echo — calm male</option><option value="fable">Fable — storyteller</option><option value="alloy">Alloy — neutral</option><option value="ash">Ash — expressive male</option><option value="coral">Coral — friendly female</option><option value="sage">Sage — soft narrator</option><option value="ballad">Ballad — emotive</option></select></div>
+            <div class="col"><label class="f">Image quality <span class="muted">(free)</span></label><select class="t" id="k_imgq"><option value="hd">HD — Flux + enhance (best free)</option><option value="fast">Fast — quicker, lower detail</option></select></div>
+          </div>
           <div class="btn-row"><button class="btn" id="saveSettings">Save settings</button></div>
+          <div class="note">All free: Gemini + Pollinations cover text, images and voice at no cost. fal.ai is only needed for premium AI motion video.</div>
         </div>
       </section>
     </div>
@@ -225,7 +239,7 @@
 
 <script>
 const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-let store={geminiKey:"",openrouterKey:"",falKey:""};
+let store={geminiKey:"",pollKey:"",openrouterKey:"",falKey:"",voice:"nova",imgq:"hd"};
 let characters=[]; let scenes=[]; let LIC={plan:"trial",trial:true}; let FEAT={};
 const PUB_PEM="MCowBQYDK2VwAyEAGVPWCJ83TDctfHcBbpzQbPQeuUCquNRHlpIC7F0Tfvk=";
 const PLAN={trial:{video:1,social:0,youtube:0,character:0,premium:0},pro:{video:1,social:1,youtube:1,character:1,premium:1}};
@@ -245,9 +259,9 @@ $$("#nav button").forEach(b=>b.onclick=()=>{const v=b.dataset.v,fk=NAVF[v];
   if(fk&&!FEAT[fk]){toast("That's a Pro feature — activate to unlock",true);navTo("license");return;}navTo(v);});
 
 /* settings */
-function fillSettings(){$("#k_gemini").value=store.geminiKey||"";$("#k_openrouter").value=store.openrouterKey||"";$("#k_fal").value=store.falKey||"";refreshBadge();}
-function refreshBadge(){$("#engineBadge").textContent=store.geminiKey?"gemini":store.openrouterKey?"openrouter":"not set";}
-$("#saveSettings").onclick=()=>{store.geminiKey=$("#k_gemini").value.trim();store.openrouterKey=$("#k_openrouter").value.trim();store.falKey=$("#k_fal").value.trim();saveStore();refreshBadge();toast("Settings saved");};
+function fillSettings(){$("#k_gemini").value=store.geminiKey||"";$("#k_poll").value=store.pollKey||"";$("#k_openrouter").value=store.openrouterKey||"";$("#k_fal").value=store.falKey||"";$("#k_voice").value=store.voice||"nova";$("#k_imgq").value=store.imgq||"hd";refreshBadge();}
+function refreshBadge(){$("#engineBadge").textContent=store.geminiKey?"gemini":store.pollKey?"pollinations":store.openrouterKey?"openrouter":"not set";}
+$("#saveSettings").onclick=()=>{store.geminiKey=$("#k_gemini").value.trim();store.pollKey=$("#k_poll").value.trim();store.openrouterKey=$("#k_openrouter").value.trim();store.falKey=$("#k_fal").value.trim();store.voice=$("#k_voice").value;store.imgq=$("#k_imgq").value;saveStore();refreshBadge();toast("Settings saved");};
 
 /* AI text — current free Gemini 2.5 models with 429 backoff-retry, then OpenRouter fallback */
 const GEM_MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite"];
@@ -276,24 +290,29 @@ async function openrouterAI(prompt){
   if(!r.ok)throw new Error("OpenRouter "+r.status);
   const j=await r.json();return j.choices?.[0]?.message?.content||"";
 }
+async function pollAI(prompt){
+  const r=await fetch("https://gen.pollinations.ai/v1/chat/completions",
+    {method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+store.pollKey},
+     body:JSON.stringify({model:"gemini",messages:[{role:"user",content:prompt}]})});
+  if(!r.ok)throw new Error("Pollinations "+r.status);
+  const j=await r.json();return j.choices?.[0]?.message?.content||"";
+}
 async function ai(prompt,btn,label){
   busy(btn,true,label);
   try{
-    if(store.geminiKey){
-      try{return await geminiAI(prompt);}
-      catch(e){
-        if(store.openrouterKey){toast("Gemini limited — switching to OpenRouter…");return await openrouterAI(prompt);}
-        if(e.rate)throw new Error("Gemini hit its free-tier limit (429). Wait ~60s and retry, or add an OpenRouter key in Settings as automatic backup.");
-        throw e;
-      }
-    }
-    if(store.openrouterKey)return await openrouterAI(prompt);
-    throw new Error("No AI key set — add a free Gemini key in Settings.");
+    let lastErr;
+    if(store.geminiKey){try{return await geminiAI(prompt);}catch(e){lastErr=e;}}
+    if(store.pollKey){try{toast(lastErr?"Gemini busy — using Pollinations…":"");return await pollAI(prompt);}catch(e){lastErr=e;}}
+    if(store.openrouterKey){try{toast("Falling back to OpenRouter…");return await openrouterAI(prompt);}catch(e){lastErr=e;}}
+    if(lastErr){if(lastErr.rate)throw new Error("All free engines are rate-limited right now. Wait ~60s, or add a Pollinations/OpenRouter key in Settings.");throw lastErr;}
+    throw new Error("No AI key set — add a free Gemini or Pollinations key in Settings.");
   }catch(e){toast(e.message,true);throw e;}finally{busy(btn,false);}
 }
 
 /* images — Pollinations (free) */
-function imgUrl(prompt,w,h){return "https://image.pollinations.ai/prompt/"+encodeURIComponent(prompt)+`?width=${w}&height=${h}&nologo=true&seed=${Math.floor(Math.random()*1e6)}&model=flux`;}
+function imgUrl(prompt,w,h){const seed=Math.floor(Math.random()*1e6);const enh=store.imgq!=="fast";
+  if(store.pollKey)return `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=flux&width=${w}&height=${h}&nologo=true&seed=${seed}&enhance=${enh}&key=${store.pollKey}`;
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}&model=flux&enhance=${enh}`;}
 
 /* script prompt */
 function scriptPrompt(o){return `You are a professional short-form scriptwriter. Write a ${o.len} ${o.tone.toLowerCase()} script about: "${o.topic}". Use a ${o.hook.toLowerCase()} opening hook. Exactly ${o.scenes} scenes. ${o.extra?("Extra: "+o.extra):""}
@@ -341,15 +360,32 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-cp]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.cp].caption=e.target.value);
   $$('[data-x]',w).forEach(b=>b.onclick=e=>{scenes.splice(+e.target.dataset.x,1);renderScenes();});
   $$('[data-img]',w).forEach(b=>b.onclick=e=>genImg(+e.target.dataset.img,e.target));
-  $$('[data-say]',w).forEach(b=>b.onclick=e=>say(scenes[+e.target.dataset.say].narration));
+  $$('[data-say]',w).forEach(b=>b.onclick=e=>say(scenes[+e.target.dataset.say].narration,e.target));
   $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
 }
 function genImg(i,btn){const s=scenes[i];const p=s.imagePrompt||s.narration;if(!p){toast("Add an image prompt",true);return;}
   const[W,H]=dims();s.imageUrl=imgUrl(p,W,H);const th=$(`[data-th="${i}"]`);if(th)th.src=s.imageUrl;toast("Image loading…");}
 $("#v_add").onclick=()=>{scenes.push(blank());renderScenes();};
 $("#v_imgall").onclick=()=>{scenes.forEach((s,i)=>genImg(i));renderScenes();toast("Images loading");};
+$("#v_voice").onclick=e=>voiceoverAll(e.target);
 
-function say(text){if(!text){toast("No narration",true);return;}try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);speechSynthesis.speak(u);}catch(_){toast("Voice not available",true);}}
+async function say(text,btn){if(!text){toast("No narration",true);return;}
+  if(store.pollKey){try{if(btn)busy(btn,true,"Voicing…");
+    const r=await fetch(`https://gen.pollinations.ai/audio/${encodeURIComponent(text.slice(0,1500))}?voice=${store.voice||"nova"}&key=${store.pollKey}`);
+    if(!r.ok)throw new Error("TTS "+r.status);
+    const url=URL.createObjectURL(await r.blob());new Audio(url).play();toast("HQ voice: "+(store.voice||"nova"));
+    if(btn)busy(btn,false);return;
+  }catch(e){if(btn)busy(btn,false);toast("HQ voice failed — using device voice",true);}}
+  try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text));}catch(_){toast("Voice not available",true);}}
+async function voiceoverAll(btn){const text=scenes.map(s=>s.narration).filter(Boolean).join("  ");
+  if(!text){toast("No narration in scenes yet",true);return;}
+  if(!store.pollKey){toast("Add a free Pollinations key in Settings for downloadable MP3 voiceovers",true);return;}
+  busy(btn,true,"Generating voiceover…");
+  try{const r=await fetch(`https://gen.pollinations.ai/audio/${encodeURIComponent(text.slice(0,4500))}?voice=${store.voice||"nova"}&key=${store.pollKey}`);
+    if(!r.ok)throw new Error("TTS "+r.status);
+    const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download="voiceover-"+(store.voice||"nova")+".mp3";a.click();
+    toast("Voiceover MP3 downloaded — drop it into CapCut");
+  }catch(e){toast(e.message,true);}finally{busy(btn,false);}}
 
 function parseScenes(text){scenes=[];const blocks=text.split(/SCENE\s*\d+/i).map(b=>b.trim()).filter(Boolean);
   for(const b of blocks){const n=(b.match(/NARRATION:\s*([\s\S]*?)(?:\n[A-Z ]+:|$)/i)||[])[1];const im=(b.match(/IMAGE:\s*([\s\S]*?)(?:\n[A-Z ]+:|$)/i)||[])[1];const c=(b.match(/CAPTION:\s*([\s\S]*?)(?:\n[A-Z ]+:|$)/i)||[])[1];
@@ -395,6 +431,10 @@ function drawPost(){const[W,H]=$("#p_size").value.split("x").map(Number);const c
   const lh=sz*1.25,sy=H/2-(lines.length-1)*lh/2;x.shadowColor="rgba(0,0,0,.6)";x.shadowBlur=12;lines.forEach((l,i)=>x.fillText(l,W/2,sy+i*lh));x.shadowBlur=0;
   const f=$("#p_footer").value.trim();if(f){x.font=`600 ${Math.round(W/34)}px "DM Sans",sans-serif`;const gg=x.createLinearGradient(W/2-100,0,W/2+100,0);gg.addColorStop(0,"#2dd4bf");gg.addColorStop(1,"#fb923c");x.fillStyle=gg;x.fillText(f,W/2,H-H*.07);}}
 $("#p_save").onclick=()=>{try{const a=document.createElement("a");a.download="post.png";a.href=$("#p_canvas").toDataURL("image/png");a.click();}catch(_){toast("Render a background first, then save",true);}};
+$("#cap_go").onclick=async e=>{const plat=$("#cap_plat").value;const topic=$("#cap_topic").value||$("#p_text").value||"this post";
+  const p=`Write a high-performing ${plat} caption for a post about: ${topic}. Give me, clearly separated: 1) a scroll-stopping first line, 2) a 2-3 sentence caption with personality, 3) a clear call-to-action, and 4) a line of 12-15 relevant hashtags mixing broad and niche. Keep it native to ${plat}.`;
+  $("#cap_out").textContent=await ai(p,e.target,"Writing caption…");};
+$("#cap_copy").onclick=()=>{copy($("#cap_out").textContent);toast("Caption copied");};
 
 /* youtube */
 $("#y_go").onclick=async e=>{const t=$("#y_topic").value||"my video";
