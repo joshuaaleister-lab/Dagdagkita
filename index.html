@@ -103,8 +103,8 @@
         <div class="card"><h3>Start a project</h3>
           <div class="grp"><label class="f">Topic or idea</label><input class="t" id="q_topic" placeholder="e.g. 3 unsettling facts about deep sea creatures" /></div>
           <div class="row">
-            <div class="col"><label class="f">Content type</label><select class="t" id="q_type"><option>Faceless YouTube</option><option>Shorts / Reels</option><option>Horror story</option><option>Motivational</option><option>Bible / Devotional</option><option>Facts / History</option><option>Educational</option></select></div>
-            <div class="col"><label class="f">Tone</label><select class="t" id="q_tone"><option>Cinematic</option><option>Conversational</option><option>Dramatic</option><option>Calm</option><option>Energetic</option></select></div>
+            <div class="col"><label class="f">Content type</label><select class="t" id="q_type"><option>Faceless YouTube</option><option>Shorts / Reels</option><option>Storytime</option><option>Reddit story</option><option>Horror story</option><option>True crime</option><option>Mystery / Thriller</option><option>Sci-Fi story</option><option>Fantasy story</option><option>Motivational</option><option>Bible / Devotional</option><option>Facts / History</option><option>Educational / Explainer</option><option>Listicle (Top 10)</option><option>Wholesome / Heartwarming</option><option>Comedy / Meme</option><option>Product review</option><option>Documentary</option></select></div>
+            <div class="col"><label class="f">Tone</label><select class="t" id="q_tone"><option>Cinematic</option><option>Conversational</option><option>Dramatic</option><option>Calm</option><option>Energetic</option><option>Mysterious</option><option>Suspenseful</option><option>Inspirational</option><option>Humorous</option><option>Eerie</option><option>Heartwarming</option><option>Authoritative</option></select></div>
             <div class="col"><label class="f">Scenes</label><input class="t" id="q_scenes" type="number" value="6" min="2" max="20" /></div>
           </div>
           <div class="btn-row"><button class="btn" id="q_go">Generate script &amp; load scenes</button></div>
@@ -122,7 +122,7 @@
             <div class="col"><label class="f">Hook style</label><select class="t" id="s_hook"><option>Question hook</option><option>Bold claim</option><option>Story cold-open</option><option>Shock fact</option><option>Countdown</option></select></div>
           </div>
           <div class="row">
-            <div class="col"><label class="f">Tone</label><select class="t" id="s_tone"><option>Cinematic</option><option>Conversational</option><option>Dramatic</option><option>Calm</option><option>Energetic</option></select></div>
+            <div class="col"><label class="f">Tone</label><select class="t" id="s_tone"><option>Cinematic</option><option>Conversational</option><option>Dramatic</option><option>Calm</option><option>Energetic</option><option>Mysterious</option><option>Suspenseful</option><option>Inspirational</option><option>Humorous</option><option>Eerie</option><option>Heartwarming</option><option>Authoritative</option></select></div>
             <div class="col"><label class="f">Length</label><select class="t" id="s_len"><option>~30s Short</option><option>~60s Short</option><option>2–3 min</option><option>5–7 min</option></select></div>
             <div class="col"><label class="f">Scenes</label><input class="t" id="s_scenes" type="number" value="6" min="2" max="24" /></div>
           </div>
@@ -146,7 +146,21 @@
               <option value="fal-ai/veo3.1/image-to-video">Veo 3.1 — premium, native audio (~$0.20/s · ~$12/min)</option>
             </select></div>
           </div>
-          <div class="note">Cost is billed to your own fal.ai key. For Shorts/Reels/TikTok use Portrait + a value model; 720p is fine (those apps compress anyway). 1080p ≈ 1.5× the price.</div>
+          <div class="row">
+            <div class="col"><label class="f">Image style <span class="muted">(applied to every scene image)</span></label><select class="t" id="v_style">
+              <option value="">As written in the prompt</option>
+              <option value="cinematic photo, photorealistic, dramatic lighting, ultra detailed, 8k">Cinematic / Photoreal</option>
+              <option value="3D Pixar-style render, soft global illumination, vibrant, highly detailed">3D animated (Pixar-style)</option>
+              <option value="2D flat vector illustration, clean lines, bold flat colors">2D cartoon / flat</option>
+              <option value="anime style, cel shaded, detailed background, studio anime quality">Anime</option>
+              <option value="dark cinematic, moody low-key lighting, film grain, eerie atmosphere">Dark / Horror</option>
+              <option value="comic book art, bold ink outlines, halftone shading, dynamic">Comic book</option>
+              <option value="soft watercolor painting, hand-painted, artistic, gentle tones">Watercolor</option>
+              <option value="cyberpunk, neon lighting, futuristic, high detail, atmospheric">Cyberpunk / Neon</option>
+              <option value="claymation style, stop-motion, tactile clay textures">Claymation</option>
+            </select></div>
+          </div>
+          <div class="note">Cost is billed to your own fal.ai key. For Shorts/Reels/TikTok use Portrait + a value model; 720p is fine (those apps compress anyway). 1080p ≈ 1.5× the price. The look of images is set by the prompt — the Style picker just adds the right wording for you.</div>
         </div>
         <div class="card"><h3>Scenes</h3><div id="v_scenes"></div>
           <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_animall">Animate all (fal.ai · Pro)</button></div>
@@ -229,6 +243,12 @@
               <option value="nova">Nova — warm female</option><option value="onyx">Onyx — deep male</option><option value="shimmer">Shimmer — bright female</option><option value="echo">Echo — calm male</option><option value="fable">Fable — storyteller</option><option value="alloy">Alloy — neutral</option><option value="ash">Ash — expressive male</option><option value="coral">Coral — friendly female</option><option value="sage">Sage — soft narrator</option><option value="ballad">Ballad — emotive</option></select></div>
             <div class="col"><label class="f">Image quality <span class="muted">(free)</span></label><select class="t" id="k_imgq"><option value="hd">HD — Flux + enhance (best free)</option><option value="fast">Fast — quicker, lower detail</option></select></div>
           </div>
+          <div class="grp"><label class="f">Image model <span class="muted">(premium models use your Pollinations key)</span></label><select class="t" id="k_imgmodel">
+            <option value="flux-free">Flux — free, no key needed</option>
+            <option value="nanobanana-pro">Nano Banana Pro — top quality (key)</option>
+            <option value="nanobanana-2">Nano Banana 2 — premium (key)</option>
+            <option value="seedream-pro">Seedream Pro — photoreal (key)</option>
+          </select></div>
           <div class="btn-row"><button class="btn" id="saveSettings">Save settings</button></div>
           <div class="note">All free: Gemini + Pollinations cover text, images and voice at no cost. fal.ai is only needed for premium AI motion video.</div>
         </div>
@@ -239,8 +259,11 @@
 
 <script>
 const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-let store={geminiKey:"",pollKey:"",openrouterKey:"",falKey:"",voice:"nova",imgq:"hd"};
+let store={geminiKey:"",pollKey:"",openrouterKey:"",falKey:"",voice:"nova",imgq:"hd",imgmodel:"flux-free"};
 let characters=[]; let scenes=[]; let LIC={plan:"trial",trial:true}; let FEAT={};
+let sceneAudio={}; let sceneAudioFile={};
+const EDGE_VOICE={nova:"en-US-AriaNeural",onyx:"en-US-GuyNeural",shimmer:"en-US-JennyNeural",echo:"en-US-ChristopherNeural",fable:"en-GB-RyanNeural",alloy:"en-US-EricNeural",ash:"en-US-RogerNeural",coral:"en-US-MichelleNeural",sage:"en-US-AnaNeural",ballad:"en-GB-SoniaNeural"};
+function edgeVoice(){return EDGE_VOICE[store.voice]||"en-US-AriaNeural";}
 const PUB_PEM="MCowBQYDK2VwAyEAGVPWCJ83TDctfHcBbpzQbPQeuUCquNRHlpIC7F0Tfvk=";
 const PLAN={trial:{video:1,social:0,youtube:0,character:0,premium:0},pro:{video:1,social:1,youtube:1,character:1,premium:1}};
 const NAVF={social:"social",youtube:"youtube",character:"character"};
@@ -259,9 +282,9 @@ $$("#nav button").forEach(b=>b.onclick=()=>{const v=b.dataset.v,fk=NAVF[v];
   if(fk&&!FEAT[fk]){toast("That's a Pro feature — activate to unlock",true);navTo("license");return;}navTo(v);});
 
 /* settings */
-function fillSettings(){$("#k_gemini").value=store.geminiKey||"";$("#k_poll").value=store.pollKey||"";$("#k_openrouter").value=store.openrouterKey||"";$("#k_fal").value=store.falKey||"";$("#k_voice").value=store.voice||"nova";$("#k_imgq").value=store.imgq||"hd";refreshBadge();}
+function fillSettings(){$("#k_gemini").value=store.geminiKey||"";$("#k_poll").value=store.pollKey||"";$("#k_openrouter").value=store.openrouterKey||"";$("#k_fal").value=store.falKey||"";$("#k_voice").value=store.voice||"nova";$("#k_imgq").value=store.imgq||"hd";$("#k_imgmodel").value=store.imgmodel||"flux-free";refreshBadge();}
 function refreshBadge(){$("#engineBadge").textContent=store.geminiKey?"gemini":store.pollKey?"pollinations":store.openrouterKey?"openrouter":"not set";}
-$("#saveSettings").onclick=()=>{store.geminiKey=$("#k_gemini").value.trim();store.pollKey=$("#k_poll").value.trim();store.openrouterKey=$("#k_openrouter").value.trim();store.falKey=$("#k_fal").value.trim();store.voice=$("#k_voice").value;store.imgq=$("#k_imgq").value;saveStore();refreshBadge();toast("Settings saved");};
+$("#saveSettings").onclick=()=>{store.geminiKey=$("#k_gemini").value.trim();store.pollKey=$("#k_poll").value.trim();store.openrouterKey=$("#k_openrouter").value.trim();store.falKey=$("#k_fal").value.trim();store.voice=$("#k_voice").value;store.imgq=$("#k_imgq").value;store.imgmodel=$("#k_imgmodel").value;saveStore();refreshBadge();toast("Settings saved");};
 
 /* AI text — current free Gemini 2.5 models with 429 backoff-retry, then OpenRouter fallback */
 const GEM_MODELS=["gemini-2.5-flash","gemini-2.5-flash-lite"];
@@ -311,7 +334,6 @@ async function ai(prompt,btn,label){
 
 /* images — Pollinations (free) */
 function imgUrl(prompt,w,h){const seed=Math.floor(Math.random()*1e6);const enh=store.imgq!=="fast";
-  if(store.pollKey)return `https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=flux&width=${w}&height=${h}&nologo=true&seed=${seed}&enhance=${enh}&key=${store.pollKey}`;
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}&model=flux&enhance=${enh}`;}
 
 /* script prompt */
@@ -347,44 +369,60 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
         <div class="grp"><label class="f">Narration</label><textarea class="t" rows="2" data-n="${i}">${esc(s.narration)}</textarea></div>
         <div class="grp"><label class="f">Image prompt</label><input class="t" data-ip="${i}" value="${esc(s.imagePrompt)}"/></div>
         <div class="row"><div class="col"><label class="f">Caption</label><input class="t" data-cp="${i}" value="${esc(s.caption)}"/></div>
-        <div class="col" style="display:flex;align-items:flex-end;gap:6px">
+        <div class="col" style="display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap">
           <button class="btn ghost sm" data-img="${i}">Image</button>
           <button class="btn ghost sm" data-say="${i}">▶ Voice</button>
+          <label class="btn ghost sm" style="cursor:pointer">⬆ Upload voice<input type="file" accept="audio/*" data-up="${i}" style="display:none"/></label>
           <button class="btn ghost sm" data-anim="${i}">Animate</button>
         </div></div>
+        <div data-aud="${i}">${sceneAudio[i]?`<audio controls src="${sceneAudio[i]}" style="width:100%;margin-top:8px"></audio>`:""}</div>
         <div data-clip="${i}">${s.videoUrl?`<a class="dl" href="${s.videoUrl}" target="_blank" download>↓ Download clip ${i+1}</a>`:""}</div>
       </div></div>`;
     w.appendChild(d);});
-  $$('[data-n]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.n].narration=e.target.value);
-  $$('[data-ip]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.ip].imagePrompt=e.target.value);
-  $$('[data-cp]',w).forEach(t=>t.oninput=e=>scenes[+e.target.dataset.cp].caption=e.target.value);
+  $$('[data-n]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.n].narration=e.target.value;saveWork();});
+  $$('[data-ip]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.ip].imagePrompt=e.target.value;saveWork();});
+  $$('[data-cp]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.cp].caption=e.target.value;saveWork();});
   $$('[data-x]',w).forEach(b=>b.onclick=e=>{scenes.splice(+e.target.dataset.x,1);renderScenes();});
   $$('[data-img]',w).forEach(b=>b.onclick=e=>genImg(+e.target.dataset.img,e.target));
-  $$('[data-say]',w).forEach(b=>b.onclick=e=>say(scenes[+e.target.dataset.say].narration,e.target));
+  $$('[data-say]',w).forEach(b=>b.onclick=e=>{const i=+e.target.dataset.say;if(sceneAudio[i]){new Audio(sceneAudio[i]).play();return;}say(scenes[i].narration,e.target);});
+  $$('[data-up]',w).forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.up;const f=e.target.files[0];if(!f)return;if(sceneAudio[i])URL.revokeObjectURL(sceneAudio[i]);sceneAudio[i]=URL.createObjectURL(f);sceneAudioFile[i]=f;renderScenes();toast("Your voiceover is attached to scene "+(i+1));});
   $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
 }
-function genImg(i,btn){const s=scenes[i];const p=s.imagePrompt||s.narration;if(!p){toast("Add an image prompt",true);return;}
-  const[W,H]=dims();s.imageUrl=imgUrl(p,W,H);const th=$(`[data-th="${i}"]`);if(th)th.src=s.imageUrl;toast("Image loading…");}
+async function resolveImg(prompt,w,h){const enh=store.imgq!=="fast";const seed=Math.floor(Math.random()*1e6);const m=store.imgmodel||"flux-free";
+  if(store.pollKey&&m!=="flux-free"){try{const r=await fetch(`https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=${m}&width=${w}&height=${h}&nologo=true&seed=${seed}&enhance=${enh}`,{headers:{Authorization:"Bearer "+store.pollKey}});
+    if(r.ok)return URL.createObjectURL(await r.blob());}catch(_){}}
+  return imgUrl(prompt,w,h);}
+async function genImg(i,btn){const s=scenes[i];let p=s.imagePrompt||s.narration;if(!p){toast("Add an image prompt",true);return;}
+  const sty=($("#v_style")||{}).value||"";if(sty)p=sty+". "+p;
+  const[W,H]=dims();if(btn)busy(btn,true,"Image…");
+  try{s.imageUrl=await resolveImg(p,W,H);const th=$(`[data-th="${i}"]`);if(th)th.src=s.imageUrl;saveWork();}
+  catch(e){toast(e.message,true);}finally{if(btn)busy(btn,false);}}
+function saveWork(){try{const sc=scenes.map(s=>({...s,imageUrl:String(s.imageUrl||"").startsWith("blob:")?"":s.imageUrl}));localStorage.setItem("dk_work",JSON.stringify({scenes:sc,script:($("#s_out")||{}).textContent||"",pt:($("#p_text")||{}).value||"",pf:($("#p_footer")||{}).value||"",pb:($("#p_bg")||{}).value||"",cap:($("#cap_out")||{}).textContent||""}));}catch(_){}}
+function loadWork(){try{const d=JSON.parse(localStorage.getItem("dk_work")||"null");if(!d)return;if(Array.isArray(d.scenes)&&d.scenes.length)scenes=d.scenes;if(d.script&&$("#s_out"))$("#s_out").textContent=d.script;if(d.pt&&$("#p_text"))$("#p_text").value=d.pt;if(d.pf&&$("#p_footer"))$("#p_footer").value=d.pf;if(d.pb&&$("#p_bg"))$("#p_bg").value=d.pb;if(d.cap&&$("#cap_out"))$("#cap_out").textContent=d.cap;}catch(_){}}
+setInterval(saveWork,8000);window.addEventListener("beforeunload",saveWork);
 $("#v_add").onclick=()=>{scenes.push(blank());renderScenes();};
 $("#v_imgall").onclick=()=>{scenes.forEach((s,i)=>genImg(i));renderScenes();toast("Images loading");};
 $("#v_voice").onclick=e=>voiceoverAll(e.target);
 
+function chunkText(text,max){const sents=text.match(/[^.!?]+[.!?]*\s*/g)||[text];const out=[];let cur="";
+  for(const s of sents){if((cur+s).length>max&&cur){out.push(cur);cur=s;}else cur+=s;}if(cur)out.push(cur);return out;}
+async function ttsBlob(text){
+  try{const r=await fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,voice:edgeVoice()})});
+    if(r.ok){const b=await r.blob();if(b.size>0&&b.type.indexOf("audio")>-1)return b;}}catch(_){}
+  if(store.pollKey){const r=await fetch(`https://gen.pollinations.ai/audio/${encodeURIComponent(text)}?voice=${store.voice||"nova"}`,{headers:{Authorization:"Bearer "+store.pollKey}});
+    if(!r.ok)throw new Error("TTS "+r.status+(r.status===402?" — Pollinations pollen empty; add pollen or upload your own MP3":""));return await r.blob();}
+  throw new Error("No voice engine yet — deploy the free /api/tts backend, add Pollinations pollen, or upload your own MP3 per scene.");}
 async function say(text,btn){if(!text){toast("No narration",true);return;}
-  if(store.pollKey){try{if(btn)busy(btn,true,"Voicing…");
-    const r=await fetch(`https://gen.pollinations.ai/audio/${encodeURIComponent(text.slice(0,1500))}?voice=${store.voice||"nova"}&key=${store.pollKey}`);
-    if(!r.ok)throw new Error("TTS "+r.status);
-    const url=URL.createObjectURL(await r.blob());new Audio(url).play();toast("HQ voice: "+(store.voice||"nova"));
-    if(btn)busy(btn,false);return;
-  }catch(e){if(btn)busy(btn,false);toast("HQ voice failed — using device voice",true);}}
-  try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text));}catch(_){toast("Voice not available",true);}}
+  if(btn)busy(btn,true,"Voicing…");
+  try{const blob=await ttsBlob(text.slice(0,2000));new Audio(URL.createObjectURL(blob)).play();}
+  catch(e){try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text));toast("Using device voice (no free engine yet)");}catch(_){toast(e.message,true);}}
+  finally{if(btn)busy(btn,false);}}
 async function voiceoverAll(btn){const text=scenes.map(s=>s.narration).filter(Boolean).join("  ");
   if(!text){toast("No narration in scenes yet",true);return;}
-  if(!store.pollKey){toast("Add a free Pollinations key in Settings for downloadable MP3 voiceovers",true);return;}
-  busy(btn,true,"Generating voiceover…");
-  try{const r=await fetch(`https://gen.pollinations.ai/audio/${encodeURIComponent(text.slice(0,4500))}?voice=${store.voice||"nova"}&key=${store.pollKey}`);
-    if(!r.ok)throw new Error("TTS "+r.status);
-    const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download="voiceover-"+(store.voice||"nova")+".mp3";a.click();
-    toast("Voiceover MP3 downloaded — drop it into CapCut");
+  const chunks=chunkText(text,1400);busy(btn,true,"Generating voiceover…");
+  try{const blobs=[];for(const c of chunks){blobs.push(await ttsBlob(c));}
+    const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(blobs,{type:"audio/mpeg"}));a.download="voiceover-"+(store.voice||"nova")+".mp3";a.click();
+    toast("Voiceover MP3 ("+chunks.length+(chunks.length>1?" parts":" part")+") downloaded — drop into CapCut");
   }catch(e){toast(e.message,true);}finally{busy(btn,false);}}
 
 function parseScenes(text){scenes=[];const blocks=text.split(/SCENE\s*\d+/i).map(b=>b.trim()).filter(Boolean);
@@ -409,7 +447,7 @@ async function falClip(model,prompt,imageDataUri){
   return rj.video?.url||rj.video_url||(rj.videos&&rj.videos[0]?.url);
 }
 async function animate(i,btn){if(!FEAT.premium){toast("AI motion is Pro — activate to unlock",true);navTo("license");return;}
-  const s=scenes[i];if(!s.imageUrl)genImg(i);if(!s.imageUrl){toast("Generate the image first",true);return;}
+  const s=scenes[i];if(!s.imageUrl){await genImg(i);}if(!s.imageUrl){toast("Generate the image first",true);return;}
   busy(btn,true,"Animating…");
   try{const di=await imageToDataUri(s.imageUrl);const url=await falClip($("#v_model").value,(s.imagePrompt||s.narration||"natural motion")+". Natural cinematic motion.",di);
     s.videoUrl=url;const c=$(`[data-clip="${i}"]`);if(c)c.innerHTML=`<a class="dl" href="${url}" target="_blank" download>↓ Download clip ${i+1}</a>`;toast("Clip ready");}
@@ -419,8 +457,9 @@ $("#v_animall").onclick=async e=>{if(!FEAT.premium){toast("AI motion is Pro",tru
 
 /* social post */
 let bg=null;
-$("#p_gen").onclick=e=>{const[W,H]=$("#p_size").value.split("x").map(Number);busy(e.target,true,"Loading bg…");
-  bg=new Image();bg.crossOrigin="anonymous";bg.onload=()=>{drawPost();busy(e.target,false);};bg.onerror=()=>{busy(e.target,false);toast("Background failed",true);};bg.src=imgUrl($("#p_bg").value,W,H);};
+$("#p_gen").onclick=async e=>{const[W,H]=$("#p_size").value.split("x").map(Number);busy(e.target,true,"Loading bg…");
+  try{const u=await resolveImg($("#p_bg").value,W,H);bg=new Image();bg.crossOrigin="anonymous";bg.onload=()=>{drawPost();busy(e.target,false);};bg.onerror=()=>{busy(e.target,false);toast("Background failed",true);};bg.src=u;}
+  catch(err){busy(e.target,false);toast(err.message,true);}};
 $("#p_render").onclick=()=>drawPost();
 function drawPost(){const[W,H]=$("#p_size").value.split("x").map(Number);const cv=$("#p_canvas");cv.width=W;cv.height=H;const x=cv.getContext("2d");
   x.fillStyle="#0a0e14";x.fillRect(0,0,W,H);if(bg)try{x.drawImage(bg,0,0,W,H);}catch(_){}
@@ -486,7 +525,7 @@ $("#loadProj").onclick=()=>{const inp=document.createElement("input");inp.type="
 function copy(t){const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");}catch(_){}ta.remove();}
 
 /* init */
-loadStore();fillSettings();renderScenes();renderChars();drawPost();loadLicense();
+loadStore();loadWork();fillSettings();renderScenes();renderChars();drawPost();loadLicense();
 </script>
 </body>
 </html>
