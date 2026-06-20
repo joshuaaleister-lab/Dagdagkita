@@ -163,7 +163,8 @@
           <div class="note">Cost is billed to your own fal.ai key. For Shorts/Reels/TikTok use Portrait + a value model; 720p is fine (those apps compress anyway). 1080p ≈ 1.5× the price. The look of images is set by the prompt — the Style picker just adds the right wording for you.</div>
         </div>
         <div class="card"><h3>Scenes</h3><div id="v_scenes"></div>
-          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_animall">Animate all (fal.ai · Pro)</button></div>
+          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_build">🎬 Build full video</button><button class="btn ghost sm" id="v_animall">Animate all (fal.ai · Pro)</button></div>
+          <div class="note">Build full video stitches your scene images into a finished MP4 with smooth Ken-Burns motion, your captions, and your voiceover — free, right in the browser. It renders in real time, so a 1-minute video takes about a minute.</div>
         </div>
       </section>
 
@@ -454,6 +455,51 @@ async function animate(i,btn){if(!FEAT.premium){toast("AI motion is Pro — acti
   catch(e){toast(e.message,true);}finally{busy(btn,false);}}
 $("#v_animall").onclick=async e=>{if(!FEAT.premium){toast("AI motion is Pro",true);navTo("license");return;}
   busy(e.target,true,"Animating…");for(let i=0;i<scenes.length;i++){try{await animate(i,null);}catch(_){}}busy(e.target,false);toast("Done — download each clip and assemble in CapCut");};
+
+/* free finished-video builder — canvas + MediaRecorder (no server, no ffmpeg) */
+function loadImg(url){return new Promise(res=>{if(!url){res(null);return;}const im=new Image();im.crossOrigin="anonymous";im.onload=()=>res(im);im.onerror=()=>res(null);im.src=url;});}
+function drawKB(ctx,img,W,H,t,idx){ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);
+  const ir=img.width/img.height,cr=W/H;let dw,dh;if(ir>cr){dh=H;dw=H*ir;}else{dw=W;dh=W/ir;}
+  const scale=1+0.09*t;dw*=scale;dh*=scale;const dir=idx%2?-1:1;const px=dir*(dw-W)*0.16*(t-0.5);
+  ctx.drawImage(img,(W-dw)/2+px,(H-dh)/2,dw,dh);}
+function drawCap(ctx,text,W,H){if(!text)return;const fs=Math.round(W/22);ctx.font=`700 ${fs}px "DM Sans",sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";
+  const words=String(text).split(/\s+/),lines=[];let line="";const maxW=W*0.86;
+  for(const w of words){const tt=line?line+" "+w:w;if(ctx.measureText(tt).width>maxW&&line){lines.push(line);line=w;}else line=tt;}if(line)lines.push(line);
+  const lh=fs*1.3,bh=lines.length*lh,cy=H-H*0.14;
+  ctx.fillStyle="rgba(0,0,0,.45)";ctx.fillRect(0,cy-bh/2-12,W,bh+24);
+  ctx.fillStyle="#fff";ctx.shadowColor="rgba(0,0,0,.85)";ctx.shadowBlur=8;
+  lines.forEach((l,i)=>ctx.fillText(l,W/2,cy-bh/2+lh/2+i*lh));ctx.shadowBlur=0;}
+async function buildVideo(btn){
+  if(!scenes.length){toast("Create scenes first",true);return;}
+  busy(btn,true,"Loading images…");
+  const[W,H]=dims();const pairs=[];
+  for(let i=0;i<scenes.length;i++){const im=await loadImg(scenes[i].imageUrl);if(im)pairs.push({img:im,caption:scenes[i].caption||"",audio:sceneAudio[i]||null});}
+  if(!pairs.length){toast("Generate scene images first (Generate all images)",true);busy(btn,false);return;}
+  let audioEl=null,audioDur=0;
+  try{const text=scenes.map(s=>s.narration).filter(Boolean).join("  ");
+    if(text){busy(btn,true,"Making voiceover…");const blob=await ttsBlob(text.slice(0,4500));audioEl=new Audio(URL.createObjectURL(blob));
+      await new Promise(r=>{audioEl.onloadedmetadata=()=>r();audioEl.onerror=()=>r();setTimeout(r,9000);});audioDur=audioEl.duration||0;}
+  }catch(_){audioEl=null;}
+  const total=(audioDur>0&&isFinite(audioDur))?audioDur:pairs.length*4;const per=total/pairs.length;
+  const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");
+  let stream;try{stream=canvas.captureStream(30);}catch(e){toast("Your browser can't record canvas video",true);busy(btn,false);return;}
+  let tracks=[...stream.getVideoTracks()];let ac=null;
+  if(audioEl){try{ac=new (window.AudioContext||window.webkitAudioContext)();const src=ac.createMediaElementSource(audioEl);const dest=ac.createMediaStreamDestination();src.connect(dest);src.connect(ac.destination);tracks=tracks.concat(dest.stream.getAudioTracks());}catch(_){}}
+  const mixed=new MediaStream(tracks);
+  const mime=MediaRecorder.isTypeSupported("video/mp4")?"video/mp4":MediaRecorder.isTypeSupported("video/webm;codecs=vp9")?"video/webm;codecs=vp9":"video/webm";
+  let rec;try{rec=new MediaRecorder(mixed,{mimeType:mime,videoBitsPerSecond:9000000});}catch(_){try{rec=new MediaRecorder(mixed);}catch(e2){toast("Recording not supported here",true);busy(btn,false);return;}}
+  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};const stopped=new Promise(r=>rec.onstop=r);
+  busy(btn,true,"Rendering in real time…");rec.start(100);if(audioEl){try{await audioEl.play();}catch(_){}}
+  const t0=performance.now();
+  await new Promise(resolve=>{(function frame(){const t=(performance.now()-t0)/1000;if(t>=total){resolve();return;}
+    let idx=Math.min(pairs.length-1,Math.floor(t/per));const lt=Math.max(0,Math.min(1,(t-idx*per)/per));
+    drawKB(ctx,pairs[idx].img,W,H,lt,idx);drawCap(ctx,pairs[idx].caption,W,H);requestAnimationFrame(frame);})();});
+  try{rec.stop();}catch(_){}if(audioEl)audioEl.pause();await stopped;if(ac)try{ac.close();}catch(_){}
+  const ext=mime.indexOf("mp4")>-1?"mp4":"webm";const blob=new Blob(chunks,{type:mime});
+  if(!blob.size){toast("Render produced no data — try fewer scenes or smaller size",true);busy(btn,false);return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dagdagkita-video."+ext;a.click();
+  busy(btn,false);toast("Video downloaded ("+ext.toUpperCase()+") — "+pairs.length+" scenes");}
+$("#v_build").onclick=e=>buildVideo(e.target);
 
 /* social post */
 let bg=null;
