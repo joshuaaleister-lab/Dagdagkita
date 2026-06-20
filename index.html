@@ -70,6 +70,12 @@
   a.dl{color:var(--teal);font-size:12px;text-decoration:none;border:1px solid var(--border);padding:5px 10px;border-radius:8px;display:inline-block;margin-top:6px}
   .note{background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.25);border-radius:10px;padding:12px;font-size:12.5px;color:#bdeee7;margin-top:10px}
   @media(max-width:760px){body{flex-direction:column}.side{width:100%;flex:none;min-height:auto}.nav{display:flex;flex-wrap:wrap}.nav button{width:auto}}
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-top:6px}
+  .gcard{background:var(--bg);border:1px solid var(--border);border-radius:11px;overflow:hidden;display:flex;flex-direction:column}
+  .gcard img{width:100%;aspect-ratio:1/1;object-fit:cover;background:var(--elev);display:block}
+  .gcard .ga{display:flex;flex-wrap:wrap;gap:5px;padding:8px}
+  .gcard .ga button{flex:1 1 40%;font-size:11px;padding:6px 6px;border-radius:7px;border:1px solid var(--border);background:var(--elev);color:var(--ink);cursor:pointer}
+  .gcard .ga button:hover{border-color:var(--teal);color:var(--teal)}
 </style>
 </head>
 <body>
@@ -79,6 +85,7 @@
       <button data-v="dash" class="active"><span class="ico">◆</span>Quick Create</button>
       <button data-v="script"><span class="ico">✎</span>AI Script Builder</button>
       <button data-v="video"><span class="ico">▶</span>Video Generator</button>
+      <button data-v="studio"><span class="ico">▣</span>Image Studio</button>
       <button data-v="social"><span class="ico">▦</span>Social Post Creator</button>
       <button data-v="youtube"><span class="ico">★</span>YouTube Toolkit</button>
       <button data-v="character"><span class="ico">☻</span>Character Studio</button>
@@ -153,6 +160,9 @@
               <option value="3D Pixar-style render, soft global illumination, vibrant, highly detailed">3D animated (Pixar-style)</option>
               <option value="2D flat vector illustration, clean lines, bold flat colors">2D cartoon / flat</option>
               <option value="anime style, cel shaded, detailed background, studio anime quality">Anime</option>
+              <option value="Roblox game art style, blocky 3D Roblox avatar characters, bright vibrant colors, Roblox Studio render, glossy plastic look">Roblox</option>
+              <option value="eerie skeleton character, detailed white bones, dark moody background, cinematic horror lighting, subtle rim glow">Skeleton</option>
+              <option value="simple stylized 3D animated explainer style, clean smooth rounded characters, soft even lighting, minimal background, Pixar-like render">3D explainer (ZackD-style)</option>
               <option value="dark cinematic, moody low-key lighting, film grain, eerie atmosphere">Dark / Horror</option>
               <option value="comic book art, bold ink outlines, halftone shading, dynamic">Comic book</option>
               <option value="soft watercolor painting, hand-painted, artistic, gentle tones">Watercolor</option>
@@ -166,6 +176,36 @@
           <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_build">🎬 Build full video</button><button class="btn ghost sm" id="v_animall">Animate all (fal.ai · Pro)</button></div>
           <div class="note">Build full video stitches your scene images into a finished MP4 with smooth Ken-Burns motion, your captions, and your voiceover — free, right in the browser. It renders in real time, so a 1-minute video takes about a minute.</div>
         </div>
+      </section>
+
+      <section class="page" data-p="studio">
+        <h2 class="h">Image Studio</h2>
+        <p class="lead">Generate images only — then recreate, upscale, download, or turn any image into a free moving clip. Runs on the free Flux engine.</p>
+        <div class="card">
+          <div class="grp"><label class="f">Prompt</label><textarea class="t" id="st_prompt" rows="3" placeholder="A lone skeleton detective in a rain-soaked neon alley, cinematic..."></textarea></div>
+          <div class="row">
+            <div class="col"><label class="f">Style preset</label><select class="t" id="st_style">
+              <option value="">As written</option>
+              <option value="Roblox game art style, blocky 3D Roblox avatar characters, bright vibrant colors, Roblox Studio render, glossy plastic look, game screenshot">Roblox niche</option>
+              <option value="eerie horror scene, dark cinematic, moody low-key lighting, fog, film grain, unsettling creepy atmosphere, highly detailed">Horror niche</option>
+              <option value="eerie skeleton character, detailed white bones, dark moody background, cinematic horror lighting, subtle rim glow, highly detailed">Skeleton niche</option>
+              <option value="simple stylized 3D animated explainer style, clean smooth rounded characters, soft even studio lighting, minimal clean background, Pixar-like cartoon render, storytelling frame">3D animated explainer (ZackD-style)</option>
+              <option value="cinematic photo, photorealistic, dramatic lighting, ultra detailed, 8k">Cinematic / Photoreal</option>
+              <option value="anime style, cel shaded, detailed background, studio anime quality">Anime</option>
+              <option value="2D flat vector illustration, clean lines, bold flat colors">2D cartoon / flat</option>
+              <option value="cyberpunk, neon lighting, futuristic, high detail, atmospheric">Cyberpunk / Neon</option>
+            </select></div>
+            <div class="col"><label class="f">Size</label><select class="t" id="st_size">
+              <option value="square">Square 1:1</option>
+              <option value="portrait">Portrait 9:16</option>
+              <option value="landscape">Landscape 16:9</option>
+            </select></div>
+            <div class="col"><label class="f">How many</label><select class="t" id="st_count"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="st_gen">Generate images</button></div>
+          <div class="note"><b>Recreate</b> = a fresh take of the same prompt. <b>Upscale 2×</b> enlarges the image you have (free, in-browser). <b>🎬 Clip</b> exports a short MP4 with gentle motion — your free moving image. For real subject-motion, use Animate (fal.ai · Pro) in the Video Generator.</div>
+        </div>
+        <div class="gal" id="st_out"></div>
       </section>
 
       <section class="page" data-p="social">
@@ -372,6 +412,7 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
         <div class="row"><div class="col"><label class="f">Caption</label><input class="t" data-cp="${i}" value="${esc(s.caption)}"/></div>
         <div class="col" style="display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap">
           <button class="btn ghost sm" data-img="${i}">Image</button>
+          <button class="btn ghost sm" data-dl="${i}">⬇ Save img</button>
           <button class="btn ghost sm" data-say="${i}">▶ Voice</button>
           <label class="btn ghost sm" style="cursor:pointer">⬆ Upload voice<input type="file" accept="audio/*" data-up="${i}" style="display:none"/></label>
           <button class="btn ghost sm" data-anim="${i}">Animate</button>
@@ -385,6 +426,7 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-cp]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.cp].caption=e.target.value;saveWork();});
   $$('[data-x]',w).forEach(b=>b.onclick=e=>{scenes.splice(+e.target.dataset.x,1);renderScenes();});
   $$('[data-img]',w).forEach(b=>b.onclick=e=>genImg(+e.target.dataset.img,e.target));
+  $$('[data-dl]',w).forEach(b=>b.onclick=e=>{const i=+e.target.dataset.dl;if(scenes[i].imageUrl)imgDownload(scenes[i].imageUrl);else toast("Generate the image first",true);});
   $$('[data-say]',w).forEach(b=>b.onclick=e=>{const i=+e.target.dataset.say;if(sceneAudio[i]){new Audio(sceneAudio[i]).play();return;}say(scenes[i].narration,e.target);});
   $$('[data-up]',w).forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.up;const f=e.target.files[0];if(!f)return;if(sceneAudio[i])URL.revokeObjectURL(sceneAudio[i]);sceneAudio[i]=URL.createObjectURL(f);sceneAudioFile[i]=f;renderScenes();toast("Your voiceover is attached to scene "+(i+1));});
   $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
@@ -500,6 +542,40 @@ async function buildVideo(btn){
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dagdagkita-video."+ext;a.click();
   busy(btn,false);toast("Video downloaded ("+ext.toUpperCase()+") — "+pairs.length+" scenes");}
 $("#v_build").onclick=e=>buildVideo(e.target);
+
+/* image studio — generate-only, recreate / upscale / download / free moving clip */
+function stSize(){const v=($("#st_size")||{}).value;return v==="landscape"?[1280,720]:v==="portrait"?[720,1280]:[1024,1024];}
+async function studioGen(btn){
+  const base=$("#st_prompt").value.trim();if(!base){toast("Type a prompt first",true);return;}
+  const sty=$("#st_style").value;const p=sty?sty+". "+base:base;const[w,h]=stSize();const n=+$("#st_count").value||1;
+  busy(btn,true,"Generating…");
+  for(let k=0;k<n;k++){try{const url=await resolveImg(p,w,h);addGal(url,p,w,h);}catch(_){}}
+  busy(btn,false);toast(n+" image"+(n>1?"s":"")+" started — they finish loading in a few seconds");}
+function addGal(url,prompt,w,h){
+  const out=$("#st_out");const c=document.createElement("div");c.className="gcard";
+  c.innerHTML=`<img src="${url}" loading="lazy" alt=""/><div class="ga"><button data-gdl>⬇ Save</button><button data-grc>↻ Recreate</button><button data-gup>⬆ Upscale 2×</button><button data-gmv>🎬 Clip</button></div>`;
+  c.dataset.prompt=prompt;c.dataset.w=w;c.dataset.h=h;c.dataset.url=url;out.prepend(c);
+  c.querySelector("[data-gdl]").onclick=()=>imgDownload(c.dataset.url);
+  c.querySelector("[data-grc]").onclick=async e=>{busy(e.target,true,"…");try{const u=await resolveImg(c.dataset.prompt,+c.dataset.w,+c.dataset.h);c.dataset.url=u;c.querySelector("img").src=u;}catch(_){}busy(e.target,false);};
+  c.querySelector("[data-gup]").onclick=e=>imgUpscale(c.dataset.url,e.target);
+  c.querySelector("[data-gmv]").onclick=e=>imgMotion(c.dataset.url,e.target);}
+async function imgDownload(url){try{const r=await fetch(url);const b=await r.blob();const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="dagdagkita-img-"+Date.now()+".png";a.click();toast("Image saved");}catch(_){const a=document.createElement("a");a.href=url;a.download="image.png";a.target="_blank";a.click();}}
+async function imgUpscale(url,btn){if(btn)busy(btn,true,"Upscaling…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
+  const c=document.createElement("canvas");c.width=img.width*2;c.height=img.height*2;const x=c.getContext("2d");x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.drawImage(img,0,0,c.width,c.height);
+  c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="dagdagkita-2x-"+Date.now()+".png";a.click();if(btn)busy(btn,false);toast("Upscaled 2× downloaded");},"image/png");
+}catch(_){toast("Upscale failed (image may block cross-origin)",true);if(btn)busy(btn,false);}}
+async function imgMotion(url,btn){if(btn)busy(btn,true,"Making clip…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
+  const W=img.width,H=img.height;const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");
+  let stream;try{stream=canvas.captureStream(30);}catch(_){toast("Recording not supported here",true);if(btn)busy(btn,false);return;}
+  const mime=MediaRecorder.isTypeSupported("video/mp4")?"video/mp4":"video/webm";let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(_){rec=new MediaRecorder(stream);}
+  const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};const stopped=new Promise(r=>rec.onstop=r);
+  rec.start(100);const dur=5,t0=performance.now();
+  await new Promise(res=>{(function f(){const t=(performance.now()-t0)/1000;if(t>=dur){res();return;}drawKB(ctx,img,W,H,t/dur,0);requestAnimationFrame(f);})();});
+  try{rec.stop();}catch(_){}await stopped;const ext=mime.indexOf("mp4")>-1?"mp4":"webm";const blob=new Blob(chunks,{type:mime});
+  if(!blob.size){toast("Clip produced no data",true);if(btn)busy(btn,false);return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dagdagkita-moving-"+Date.now()+"."+ext;a.click();if(btn)busy(btn,false);toast("Moving clip downloaded ("+ext.toUpperCase()+")");
+}catch(_){toast("Clip failed",true);if(btn)busy(btn,false);}}
+$("#st_gen").onclick=e=>studioGen(e.target);
 
 /* social post */
 let bg=null;
