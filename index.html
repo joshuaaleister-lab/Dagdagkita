@@ -252,6 +252,39 @@
           <div class="btn-row"><button class="btn" id="st_gen">Generate images</button></div>
           <div class="note"><b>Recreate</b> = a fresh take of the same prompt. <b>Upscale 2×</b> enlarges the image (free, in-browser). <b>🎬 Clip</b> exports an MP4 with the camera motion + length you picked above — your free moving image. Note: this moves the <i>camera</i> over the picture; to make the <i>subject</i> actually move (walk/talk), use Animate (fal.ai · Pro) in the Video Generator.</div>
         </div>
+        <div class="card"><h3>🔗 Free image tools <span class="muted">— generate elsewhere, bring back</span></h3>
+          <p class="muted" style="font-size:13px;margin:4px 0 10px">These have no free API to connect, but they're free to use in your browser. Generate there → download → use <b>⬆ Upload img</b> on a scene, or set it as the <b>📌 Reference anchor</b>. Opens in a new tab.</p>
+          <div class="btn-row" style="flex-wrap:wrap;gap:8px">
+            <a class="btn ghost sm" href="https://www.bing.com/images/create" target="_blank" rel="noopener">Bing Creator · DALL·E 3 (free)</a>
+            <a class="btn ghost sm" href="https://ideogram.ai" target="_blank" rel="noopener">Ideogram · free daily</a>
+            <a class="btn ghost sm" href="https://leonardo.ai" target="_blank" rel="noopener">Leonardo · 150 free/day</a>
+            <a class="btn ghost sm" href="https://aistudio.google.com" target="_blank" rel="noopener">Google AI Studio · Nano Banana</a>
+            <a class="btn ghost sm" href="https://firefly.adobe.com" target="_blank" rel="noopener">Adobe Firefly · free credits</a>
+            <a class="btn ghost sm" href="https://www.mage.space" target="_blank" rel="noopener">Mage · free SD</a>
+            <a class="btn ghost sm" href="https://playground.com" target="_blank" rel="noopener">Playground · free tier</a>
+            <a class="btn ghost sm" href="https://pollinations.ai" target="_blank" rel="noopener">Pollinations · free unlimited</a>
+            <a class="btn ghost sm" href="https://perchance.org/ai-text-to-image-generator" target="_blank" rel="noopener">Perchance · free, no login</a>
+            <a class="btn ghost sm" href="https://www.craiyon.com" target="_blank" rel="noopener">Craiyon · free</a>
+            <a class="btn ghost sm" href="https://designer.microsoft.com" target="_blank" rel="noopener">MS Designer · DALL·E 3</a>
+            <a class="btn ghost sm" href="https://tensor.art" target="_blank" rel="noopener">Tensor.Art · free SD</a>
+            <a class="btn ghost sm" href="https://www.krea.ai" target="_blank" rel="noopener">Krea · free tier</a>
+            <a class="btn ghost sm" href="https://www.recraft.ai" target="_blank" rel="noopener">Recraft · free, great text</a>
+          </div>
+        </div>
+        <div class="card"><h3>🎞 Free video tools <span class="muted">— make a clip, bring it back</span></h3>
+          <p class="muted" style="font-size:13px;margin:4px 0 10px">No free API, but these give <b>free daily credits</b> in the browser. Upload your scene image, describe the motion, generate, download the clip, then assemble with your voice in CapCut (or attach it to a scene). Free tiers are usually 5–10s, 720p, and most add a watermark.</p>
+          <div class="btn-row" style="flex-wrap:wrap;gap:8px">
+            <a class="btn ghost sm" href="https://imagine.art" target="_blank" rel="noopener">ImagineArt · 100 free/day, no watermark</a>
+            <a class="btn ghost sm" href="https://klingai.com" target="_blank" rel="noopener">Kling · ~66 credits/day (~6 clips)</a>
+            <a class="btn ghost sm" href="https://hailuoai.video" target="_blank" rel="noopener">Hailuo · free signup credits</a>
+            <a class="btn ghost sm" href="https://pixverse.ai" target="_blank" rel="noopener">PixVerse · daily free</a>
+            <a class="btn ghost sm" href="https://pika.art" target="_blank" rel="noopener">Pika · free, no watermark</a>
+            <a class="btn ghost sm" href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener">Luma · free monthly</a>
+            <a class="btn ghost sm" href="https://www.vidu.com" target="_blank" rel="noopener">Vidu · multi-shot, free credits</a>
+            <a class="btn ghost sm" href="https://aistudio.google.com" target="_blank" rel="noopener">Google Veo · AI Studio (top quality)</a>
+            <a class="btn ghost sm" href="https://runwayml.com" target="_blank" rel="noopener">Runway · free trial credits</a>
+          </div>
+        </div>
         <div class="gal" id="st_out"></div>
       </section>
 
@@ -490,6 +523,7 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
           <button class="btn ghost sm" data-dl="${i}">⬇ Save img</button>
           <button class="btn ghost sm" data-say="${i}">▶ Voice</button>
           <label class="btn ghost sm" style="cursor:pointer">⬆ Upload voice<input type="file" accept="audio/*" data-up="${i}" style="display:none"/></label>
+          <label class="btn ghost sm" style="cursor:pointer">⬆ Upload img<input type="file" accept="image/*" data-upimg="${i}" style="display:none"/></label>
           <button class="btn ghost sm" data-anim="${i}">Animate (paid)</button>
           <button class="btn ghost sm" data-free="${i}">🎬 Free clip</button>
           <button class="btn ghost sm" data-clr="${i}">🗑 Clear</button>
@@ -507,6 +541,7 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-dl]',w).forEach(b=>b.onclick=e=>{const i=+e.target.dataset.dl;if(scenes[i].imageUrl)imgDownload(scenes[i].imageUrl);else toast("Generate the image first",true);});
   $$('[data-say]',w).forEach(b=>b.onclick=e=>genSceneVoice(+e.target.dataset.say,e.target));
   $$('[data-up]',w).forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.up;const f=e.target.files[0];if(!f)return;if(sceneAudio[i])URL.revokeObjectURL(sceneAudio[i]);sceneAudio[i]=URL.createObjectURL(f);sceneAudioFile[i]=f;renderScenes();toast("Your voiceover is attached to scene "+(i+1));});
+  $$('[data-upimg]',w).forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.upimg;const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{scenes[i].imageUrl=rd.result;const th=$(`[data-th="${i}"]`);if(th)th.src=rd.result;saveWork();toast("Image attached to scene "+(i+1));};rd.readAsDataURL(f);});
   $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
   $$('[data-free]',w).forEach(b=>b.onclick=e=>sceneFreeClip(+e.target.dataset.free,e.target));
   $$('[data-clr]',w).forEach(b=>b.onclick=e=>clearMedia(+e.target.dataset.clr));
