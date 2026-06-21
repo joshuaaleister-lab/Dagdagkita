@@ -231,8 +231,21 @@
             </select></div>
             <div class="col"><label class="f">How many</label><select class="t" id="st_count"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
           </div>
+          <div class="row">
+            <div class="col"><label class="f">🎬 Clip motion</label><select class="t" id="st_motion">
+              <option value="auto">Auto — random each time</option>
+              <option value="push">Push in (zoom in)</option>
+              <option value="pull">Pull out (zoom out)</option>
+              <option value="panLR">Pan left → right</option>
+              <option value="panRL">Pan right → left</option>
+              <option value="panUD">Pan top → bottom</option>
+              <option value="panDU">Pan bottom → top</option>
+            </select></div>
+            <div class="col"><label class="f">🎬 Clip length</label><select class="t" id="st_cliplen"><option value="3">3 seconds</option><option value="5" selected>5 seconds</option><option value="8">8 seconds</option><option value="10">10 seconds</option></select></div>
+          </div>
+          <div class="grp"><label class="f">🎬 Or describe the motion <span class="muted">(optional — overrides the picker above)</span></label><input class="t" id="st_motionprompt" placeholder="e.g. slowly zoom in on the face · pan left to right · tilt up · pull out wide"/></div>
           <div class="btn-row"><button class="btn" id="st_gen">Generate images</button></div>
-          <div class="note"><b>Recreate</b> = a fresh take of the same prompt. <b>Upscale 2×</b> enlarges the image you have (free, in-browser). <b>🎬 Clip</b> exports a short MP4 with gentle motion — your free moving image. For real subject-motion, use Animate (fal.ai · Pro) in the Video Generator.</div>
+          <div class="note"><b>Recreate</b> = a fresh take of the same prompt. <b>Upscale 2×</b> enlarges the image (free, in-browser). <b>🎬 Clip</b> exports an MP4 with the camera motion + length you picked above — your free moving image. Note: this moves the <i>camera</i> over the picture; to make the <i>subject</i> actually move (walk/talk), use Animate (fal.ai · Pro) in the Video Generator.</div>
         </div>
         <div class="gal" id="st_out"></div>
       </section>
@@ -330,14 +343,14 @@
               <option value="nova">Nova — warm female</option><option value="onyx">Onyx — deep male</option><option value="shimmer">Shimmer — bright female</option><option value="echo">Echo — calm male</option><option value="fable">Fable — storyteller</option><option value="alloy">Alloy — neutral</option><option value="ash">Ash — expressive male</option><option value="coral">Coral — friendly female</option><option value="sage">Sage — soft narrator</option><option value="ballad">Ballad — emotive</option></select></div>
             <div class="col"><label class="f">Image quality <span class="muted">(free)</span></label><select class="t" id="k_imgq"><option value="hd">HD — Flux + enhance (best free)</option><option value="fast">Fast — quicker, lower detail</option></select></div>
           </div>
-          <div class="grp"><label class="f">Image model <span class="muted">(premium models use your Pollinations key)</span></label><select class="t" id="k_imgmodel">
-            <option value="flux-free">Flux — free, no key needed</option>
-            <option value="nanobanana-pro">Nano Banana Pro — top quality (key)</option>
-            <option value="nanobanana-2">Nano Banana 2 — premium (key)</option>
-            <option value="seedream-pro">Seedream Pro — photoreal (key)</option>
+          <div class="grp"><label class="f">Image engine</label><select class="t" id="k_imgmodel">
+            <option value="flux-free">Flux — free, no key (can be slow/unreliable when busy)</option>
+            <option value="gemini-2.5-flash-image">Google Nano Banana — free ~500/day, uses your Gemini key (recommended)</option>
+            <option value="gemini-3.1-flash-image">Nano Banana 2 — higher quality, paid (Gemini key)</option>
+            <option value="gemini-3-pro-image-preview">Nano Banana Pro — top quality, paid (Gemini key)</option>
           </select></div>
           <div class="btn-row"><button class="btn" id="saveSettings">Save settings</button></div>
-          <div class="note">All free: Gemini + Pollinations cover text, images and voice at no cost. fal.ai is only needed for premium AI motion video.</div>
+          <div class="note">If free Flux images are blank or slow, switch the engine to <b>Google Nano Banana</b> — it's reliable and free up to ~500 images/day using the Gemini key you set above. Paste a Gemini key from Google AI Studio (free, no card).</div>
         </div>
       </section>
     </div>
@@ -448,7 +461,7 @@ $("#q_copy").onclick=()=>{copy($("#q_out").textContent);toast("Copied");};
 $("#q_send").onclick=()=>{parseScenes($("#q_out").textContent);go("video");};
 
 /* scenes */
-function blank(){return{narration:"",imagePrompt:"",caption:"",imageUrl:"",videoUrl:""};}
+function blank(){return{narration:"",imagePrompt:"",caption:"",motionPrompt:"",imageUrl:"",videoUrl:""};}
 function esc(s){return (s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;");}
 function dims(){const a=$("#v_aspect").value;return a==="landscape"?[1920,1080]:a==="square"?[1080,1080]:[1080,1920];}
 function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
@@ -459,6 +472,7 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
       <div class="col">
         <div class="grp"><label class="f">Narration</label><textarea class="t" rows="2" data-n="${i}">${esc(s.narration)}</textarea></div>
         <div class="grp"><label class="f">Image prompt</label><input class="t" data-ip="${i}" value="${esc(s.imagePrompt)}"/></div>
+        <div class="grp"><label class="f">Motion prompt <span class="muted">(for Animate · describe what moves)</span></label><input class="t" data-mp="${i}" value="${esc(s.motionPrompt||'')}" placeholder="e.g. he slowly turns and smiles, camera pushes in"/></div>
         <div class="row"><div class="col"><label class="f">Caption</label><input class="t" data-cp="${i}" value="${esc(s.caption)}"/></div>
         <div class="col" style="display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap">
           <button class="btn ghost sm" data-img="${i}">Image</button>
@@ -473,6 +487,7 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
     w.appendChild(d);});
   $$('[data-n]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.n].narration=e.target.value;saveWork();});
   $$('[data-ip]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.ip].imagePrompt=e.target.value;saveWork();});
+  $$('[data-mp]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.mp].motionPrompt=e.target.value;saveWork();});
   $$('[data-cp]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.cp].caption=e.target.value;saveWork();});
   $$('[data-x]',w).forEach(b=>b.onclick=e=>{scenes.splice(+e.target.dataset.x,1);renderScenes();});
   $$('[data-img]',w).forEach(b=>b.onclick=e=>genImg(+e.target.dataset.img,e.target));
@@ -481,9 +496,17 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-up]',w).forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.up;const f=e.target.files[0];if(!f)return;if(sceneAudio[i])URL.revokeObjectURL(sceneAudio[i]);sceneAudio[i]=URL.createObjectURL(f);sceneAudioFile[i]=f;renderScenes();toast("Your voiceover is attached to scene "+(i+1));});
   $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
 }
-async function resolveImg(prompt,w,h,seed){const enh=store.imgq!=="fast";seed=seed||Math.floor(Math.random()*1e6);const m=store.imgmodel||"flux-free";
-  if(store.pollKey&&m!=="flux-free"){try{const r=await fetch(`https://gen.pollinations.ai/image/${encodeURIComponent(prompt)}?model=${m}&width=${w}&height=${h}&nologo=true&seed=${seed}&enhance=${enh}`,{headers:{Authorization:"Bearer "+store.pollKey}});
-    if(r.ok)return URL.createObjectURL(await r.blob());}catch(_){}}
+async function geminiImage(prompt,w,h){if(!store.geminiKey)throw new Error("Add your Gemini key in Settings");
+  const model=(store.imgmodel&&store.imgmodel.startsWith("gemini"))?store.imgmodel:"gemini-2.5-flash-image";
+  const ar=w&&h?(w>h?"wide 16:9 landscape":w<h?"vertical 9:16 portrait":"square"):"";
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${store.geminiKey}`,
+    {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt+(ar?(", "+ar+" composition"):"")}]}],generationConfig:{responseModalities:["IMAGE","TEXT"]}})});
+  if(!r.ok){let d="";try{d=(await r.json())?.error?.message||"";}catch(_){}throw new Error("Nano Banana "+r.status+(d?": "+d.slice(0,140):""));}
+  const j=await r.json();const parts=j.candidates?.[0]?.content?.parts||[];
+  for(const p of parts){if(p.inlineData&&p.inlineData.data)return "data:"+(p.inlineData.mimeType||"image/png")+";base64,"+p.inlineData.data;}
+  throw new Error("No image returned (daily quota reached or safety block)");}
+async function resolveImg(prompt,w,h,seed){const m=store.imgmodel||"flux-free";
+  if(m.startsWith("gemini")){if(store.geminiKey){try{return await geminiImage(prompt,w,h);}catch(e){toast(e.message+" — falling back to free Flux",true);}}else toast("Add a Gemini key in Settings to use Nano Banana — using free Flux",true);}
   return imgUrl(prompt,w,h,seed);}
 let lockSeed=Math.floor(Math.random()*1e6);
 function buildImgPrompt(raw){let p=raw;const lock=($("#v_lock")||{}).value.trim();if(lock)p=lock+". "+p;const sty=($("#v_style")||{}).value||"";if(sty)p=sty+". "+p;return p+", highly detailed, sharp focus, professional composition, no text, no watermark";}
@@ -550,7 +573,7 @@ async function falClip(model,prompt,imageDataUri){
 async function animate(i,btn){if(!FEAT.premium){toast("AI motion is Pro — activate to unlock",true);navTo("license");return;}
   const s=scenes[i];if(!s.imageUrl){await genImg(i);}if(!s.imageUrl){toast("Generate the image first",true);return;}
   busy(btn,true,"Animating…");
-  try{const di=await imageToDataUri(s.imageUrl);const url=await falClip($("#v_model").value,(s.imagePrompt||s.narration||"natural motion")+". Natural cinematic motion.",di);
+  try{const di=await imageToDataUri(s.imageUrl);const url=await falClip($("#v_model").value,(s.motionPrompt||s.imagePrompt||s.narration||"natural motion")+". Smooth cinematic motion.",di);
     s.videoUrl=url;const c=$(`[data-clip="${i}"]`);if(c)c.innerHTML=`<a class="dl" href="${url}" target="_blank" download>↓ Download clip ${i+1}</a>`;toast("Clip ready");}
   catch(e){toast(e.message,true);}finally{busy(btn,false);}}
 $("#v_animall").onclick=async e=>{if(!FEAT.premium){toast("AI motion is Pro",true);navTo("license");return;}
@@ -623,9 +646,10 @@ async function buildVideo(btn){
   await new Promise(resolve=>{(function frame(){const t=(performance.now()-t0)/1000;if(t>=total){resolve();return;}
     let idx=0;for(let k=0;k<durs.length;k++){if(t>=starts[k])idx=k;else break;}const lt=Math.max(0,Math.min(1,(t-starts[idx])/(durs[idx]||1)));
     if(mode==="perscene"&&pairs[idx].el&&!pairs[idx]._p){pairs[idx]._p=1;try{pairs[idx].el.currentTime=0;pairs[idx].el.play();}catch(_){}}
-    drawKB(ctx,pairs[idx].img,W,H,lt,idx,true);
+    const ST=["push","panLR","pull","panRL","panUD","panDU"];
+    drawDynamic(ctx,pairs[idx].img,W,H,lt,ST[idx%ST.length],true);
     const fd=0.5,tEnd=starts[idx]+durs[idx];
-    if(idx+1<pairs.length&&(tEnd-t)<fd){const fa=Math.max(0,Math.min(1,(fd-(tEnd-t))/fd));ctx.save();ctx.globalAlpha=fa;drawKB(ctx,pairs[idx+1].img,W,H,0,idx+1,false);ctx.restore();}
+    if(idx+1<pairs.length&&(tEnd-t)<fd){const fa=Math.max(0,Math.min(1,(fd-(tEnd-t))/fd));ctx.save();ctx.globalAlpha=fa;drawDynamic(ctx,pairs[idx+1].img,W,H,0,ST[(idx+1)%ST.length],false);ctx.restore();}
     drawCap(ctx,pairs[idx],W,H,lt);requestAnimationFrame(frame);})();});
   try{rec.stop();}catch(_){}if(combinedEl)try{combinedEl.pause();}catch(_){}if(musicEl)try{musicEl.pause();}catch(_){}if(stopBed)try{stopBed();}catch(_){}pairs.forEach(p=>{if(p.el)try{p.el.pause();}catch(_){}});await stopped;if(ac)try{ac.close();}catch(_){}
   const ext=mime.indexOf("mp4")>-1?"mp4":"webm";const blob=new Blob(chunks,{type:mime});
@@ -658,7 +682,7 @@ $("#v_musicfile").onchange=e=>{const f=e.target.files[0];if(!f)return;if(musicUR
 function stSize(){const v=($("#st_size")||{}).value;return v==="landscape"?[1280,720]:v==="portrait"?[720,1280]:[1024,1024];}
 async function studioGen(btn){
   const base=$("#st_prompt").value.trim();if(!base){toast("Type a prompt first",true);return;}
-  const sty=$("#st_style").value;const p=sty?sty+". "+base:base;const[w,h]=stSize();const n=+$("#st_count").value||1;
+  const sty=$("#st_style").value;const p=(sty?sty+". "+base:base)+", highly detailed, sharp focus, no text, no letters, no watermark, no captions";const[w,h]=stSize();const n=+$("#st_count").value||1;
   busy(btn,true,"Generating…");
   for(let k=0;k<n;k++){try{const url=await resolveImg(p,w,h);addGal(url,p,w,h);}catch(_){}}
   busy(btn,false);toast(n+" image"+(n>1?"s":"")+" started — they finish loading in a few seconds");}
@@ -671,21 +695,44 @@ function addGal(url,prompt,w,h){
   c.querySelector("[data-grc]").onclick=async e=>{busy(e.target,true,"…");try{const u=await resolveImg(c.dataset.prompt,+c.dataset.w,+c.dataset.h);c.dataset.url=u;c.querySelector("img").src=u;}catch(_){}busy(e.target,false);};
   c.querySelector("[data-gup]").onclick=e=>imgUpscale(c.dataset.url,e.target);
   c.querySelector("[data-gmv]").onclick=e=>imgMotion(c.dataset.url,e.target);}
-async function imgDownload(url){try{const r=await fetch(url);const b=await r.blob();const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="dagdagkita-img-"+Date.now()+".png";a.click();toast("Image saved");}catch(_){const a=document.createElement("a");a.href=url;a.download="image.png";a.target="_blank";a.click();}}
+async function imgDownload(url){try{
+  if(!url){toast("Generate the image first",true);return;}
+  if(url.startsWith("data:")){const a=document.createElement("a");a.href=url;a.download="dagdagkita-img-"+Date.now()+".png";a.click();toast("Image saved");return;}
+  const r=await fetch(url);const b=await r.blob();
+  if(!(b.type||"").startsWith("image")||b.size<1500){toast("That image didn't generate properly — regenerate it and try again (or switch engine to Nano Banana in Settings)",true);return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="dagdagkita-img-"+Date.now()+".png";a.click();toast("Image saved");
+}catch(_){toast("Couldn't download — regenerate the image and retry",true);}}
 async function imgUpscale(url,btn){if(btn)busy(btn,true,"Upscaling…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
   const c=document.createElement("canvas");c.width=img.width*2;c.height=img.height*2;const x=c.getContext("2d");x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.drawImage(img,0,0,c.width,c.height);
   c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="dagdagkita-2x-"+Date.now()+".png";a.click();if(btn)busy(btn,false);toast("Upscaled 2× downloaded");},"image/png");
 }catch(_){toast("Upscale failed (image may block cross-origin)",true);if(btn)busy(btn,false);}}
+function drawDynamic(ctx,img,W,H,p,style,clear){if(clear!==false){ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);}
+  const ir=img.width/img.height,cr=W/H;let bw,bh;if(ir>cr){bh=H;bw=H*ir;}else{bw=W;bh=W/ir;}
+  const zf=0.22;const s=(style==="pull")?1+zf*(1-p):1+zf*p;bw*=s;bh*=s;
+  const maxX=Math.max(0,(bw-W)/2),maxY=Math.max(0,(bh-H)/2);let dx=0,dy=0;
+  if(style==="panLR")dx=-maxX+2*maxX*p;else if(style==="panRL")dx=maxX-2*maxX*p;else if(style==="panUD")dy=-maxY+2*maxY*p;else if(style==="panDU")dy=maxY-2*maxY*p;
+  ctx.drawImage(img,(W-bw)/2+dx,(H-bh)/2+dy,bw,bh);}
+function parseMotion(t){t=(t||"").toLowerCase();if(!t.trim())return null;
+  if(/pan\s*right|left\s*to\s*right|swipe right|→/.test(t))return "panLR";
+  if(/pan\s*left|right\s*to\s*left|swipe left|←/.test(t))return "panRL";
+  if(/pan\s*up|tilt\s*up|upward|bottom\s*to\s*top|rise/.test(t))return "panDU";
+  if(/pan\s*down|tilt\s*down|downward|top\s*to\s*bottom|drop/.test(t))return "panUD";
+  if(/zoom\s*out|pull|wider|dolly out|back away|reveal/.test(t))return "pull";
+  if(/zoom\s*in|push|closer|into|dolly in|punch in|close up/.test(t))return "push";
+  return null;}
 async function imgMotion(url,btn){if(btn)busy(btn,true,"Making clip…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
   const W=img.width,H=img.height;const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");
   let stream;try{stream=canvas.captureStream(30);}catch(_){toast("Recording not supported here",true);if(btn)busy(btn,false);return;}
   const mime=MediaRecorder.isTypeSupported("video/mp4")?"video/mp4":"video/webm";let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(_){rec=new MediaRecorder(stream);}
   const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};const stopped=new Promise(r=>rec.onstop=r);
-  rec.start(100);const dur=5,t0=performance.now();
-  await new Promise(res=>{(function f(){const t=(performance.now()-t0)/1000;if(t>=dur){res();return;}drawKB(ctx,img,W,H,t/dur,0);requestAnimationFrame(f);})();});
+  const typed=parseMotion(($("#st_motionprompt")||{}).value);const sel=(($("#st_motion")||{}).value)||"auto";const allSt=["push","pull","panLR","panRL","panUD","panDU"];
+  const style=typed||(sel==="auto"?allSt[Math.floor(Math.random()*allSt.length)]:sel);
+  const dur=+(($("#st_cliplen")||{}).value)||5;
+  rec.start(100);const t0=performance.now();
+  await new Promise(res=>{(function f(){const t=(performance.now()-t0)/1000;if(t>=dur){res();return;}const e=t/dur;const ee=e<0.5?2*e*e:1-Math.pow(-2*e+2,2)/2;drawDynamic(ctx,img,W,H,ee,style);requestAnimationFrame(f);})();});
   try{rec.stop();}catch(_){}await stopped;const ext=mime.indexOf("mp4")>-1?"mp4":"webm";const blob=new Blob(chunks,{type:mime});
   if(!blob.size){toast("Clip produced no data",true);if(btn)busy(btn,false);return;}
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dagdagkita-moving-"+Date.now()+"."+ext;a.click();if(btn)busy(btn,false);toast("Moving clip downloaded ("+ext.toUpperCase()+")");
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dagdagkita-moving-"+Date.now()+"."+ext;a.click();if(btn)busy(btn,false);toast("Moving clip downloaded ("+ext.toUpperCase()+" · "+style+")");
 }catch(_){toast("Clip failed",true);if(btn)busy(btn,false);}}
 $("#st_gen").onclick=e=>studioGen(e.target);
 
