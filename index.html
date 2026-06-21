@@ -166,18 +166,18 @@
             <div class="col"><label class="f">Image style <span class="muted">(applied to every scene image)</span></label><select class="t" id="v_style">
               <option value="">As written in the prompt</option>
               <option value="Wojak meme style, crude MS Paint drawing, simple thick black outline, minimal flat shading, plain pale background, internet meme cartoon, exaggerated expressive face">Wojak meme (FB viral)</option>
-              <option value="cinematic photo, photorealistic, dramatic lighting, ultra detailed, 8k">Cinematic / Photoreal</option>
-              <option value="3D Pixar-style render, soft global illumination, vibrant, highly detailed">3D animated (Pixar-style)</option>
-              <option value="2D flat vector illustration, clean lines, bold flat colors">2D cartoon / flat</option>
-              <option value="anime style, cel shaded, detailed background, studio anime quality">Anime</option>
-              <option value="Roblox game art style, blocky 3D Roblox avatar characters, bright vibrant colors, Roblox Studio render, glossy plastic look">Roblox</option>
-              <option value="eerie skeleton character, detailed white bones, dark moody background, cinematic horror lighting, subtle rim glow">Skeleton</option>
-              <option value="simple stylized 3D animated explainer style, clean smooth rounded characters, soft even lighting, minimal background, Pixar-like render">3D explainer (ZackD-style)</option>
-              <option value="dark cinematic, moody low-key lighting, film grain, eerie atmosphere">Dark / Horror</option>
-              <option value="comic book art, bold ink outlines, halftone shading, dynamic">Comic book</option>
-              <option value="soft watercolor painting, hand-painted, artistic, gentle tones">Watercolor</option>
-              <option value="cyberpunk, neon lighting, futuristic, high detail, atmospheric">Cyberpunk / Neon</option>
-              <option value="claymation style, stop-motion, tactile clay textures">Claymation</option>
+              <option value="photorealistic cinematic photograph, shot on DSLR 50mm lens, realistic natural lighting, shallow depth of field, ultra-detailed, sharp focus, 8k, lifelike">Cinematic / Photoreal</option>
+              <option value="3D CGI animated movie still, Pixar and DreamWorks 3D animation style, fully three-dimensional rounded characters, soft volumetric studio lighting, subsurface scattering skin, glossy detailed textures, octane render, cinematic depth of field, three-dimensional NOT flat NOT 2D">3D animated (Pixar-style)</option>
+              <option value="simple 3D animated explainer style, smooth rounded minimalist 3D characters, clean soft studio lighting, plain solid-color background, Pixar-like simple shapes, glossy 3D render, three-dimensional NOT 2D NOT flat">3D explainer (ZackD-style)</option>
+              <option value="flat 2D cartoon illustration, bold clean black outlines, flat cel-shaded colors, vector art style, simple shapes, hand-drawn animation look">2D cartoon / flat</option>
+              <option value="high-quality anime key visual, Japanese anime illustration style, clean cel shading, expressive detailed eyes, vibrant colors, studio anime production quality">Anime</option>
+              <option value="Roblox game screenshot, blocky Roblox avatar character with a rectangular blocky head, cylindrical arms and legs, shiny smooth plastic toy-like surfaces, simple low-poly blocky 3D, Roblox Studio render, bright even lighting, blocky 3D environment, looks exactly like the game Roblox, NOT realistic">Roblox</option>
+              <option value="eerie skeleton character, detailed anatomically correct white bones, dark moody cinematic background, dramatic horror rim lighting, subtle glow, highly detailed, ominous">Skeleton</option>
+              <option value="dark cinematic horror scene, moody low-key lighting, deep shadows, fog, film grain, desaturated cold palette, unsettling eerie atmosphere, highly detailed">Dark / Horror</option>
+              <option value="comic book art style, bold black ink outlines, halftone dot shading, dynamic action composition, vibrant cel colors, graphic novel illustration">Comic book</option>
+              <option value="soft watercolor painting, hand-painted on textured paper, gentle washes of color, artistic brush strokes, delicate painterly look">Watercolor</option>
+              <option value="cyberpunk scene, glowing neon lighting, futuristic rain-slicked city, reflective surfaces, high contrast, atmospheric, highly detailed, blade-runner aesthetic">Cyberpunk / Neon</option>
+              <option value="claymation stop-motion style, characters sculpted from modeling clay, visible fingerprints and clay texture, miniature handmade set, soft studio lighting">Claymation</option>
             </select></div>
           </div>
           <div class="row">
@@ -186,6 +186,10 @@
               <label class="f" style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="v_seedlock" checked/> Lock seed</label>
               <label class="f" style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="v_capmatch" checked/> Captions = narration</label>
             </div>
+          </div>
+          <div class="row">
+            <div class="col"><label class="f">📌 Reference image anchor <span class="muted">(Nano Banana — keeps scenes consistent)</span></label><input class="t" id="v_reffile" type="file" accept="image/*"/></div>
+            <div class="col" style="flex:0 0 auto;display:flex;align-items:flex-end;gap:10px"><img id="v_refprev" alt="" style="display:none;height:54px;border-radius:8px;border:1px solid var(--border)"/><button class="btn ghost sm" id="v_refclear" style="display:none">Clear ref</button></div>
           </div>
           <div class="note">Cost is billed to your own fal.ai key. For Shorts/Reels/TikTok use Portrait + a value model; 720p is fine (those apps compress anyway). 1080p ≈ 1.5× the price. <b>Consistency lock</b> + <b>Lock seed</b> keep your character looking the same across scenes. <b>Captions = narration</b> makes on-screen text match the spoken words exactly.</div>
         </div>
@@ -215,14 +219,15 @@
             <div class="col"><label class="f">Style preset</label><select class="t" id="st_style">
               <option value="">As written</option>
               <option value="Wojak meme style, crude MS Paint drawing, simple thick black outline, minimal flat shading, plain pale background, internet meme cartoon, exaggerated expressive face">Wojak meme (FB viral)</option>
-              <option value="Roblox game art style, blocky 3D Roblox avatar characters, bright vibrant colors, Roblox Studio render, glossy plastic look, game screenshot">Roblox niche</option>
-              <option value="eerie horror scene, dark cinematic, moody low-key lighting, fog, film grain, unsettling creepy atmosphere, highly detailed">Horror niche</option>
-              <option value="eerie skeleton character, detailed white bones, dark moody background, cinematic horror lighting, subtle rim glow, highly detailed">Skeleton niche</option>
-              <option value="simple stylized 3D animated explainer style, clean smooth rounded characters, soft even studio lighting, minimal clean background, Pixar-like cartoon render, storytelling frame">3D animated explainer (ZackD-style)</option>
-              <option value="cinematic photo, photorealistic, dramatic lighting, ultra detailed, 8k">Cinematic / Photoreal</option>
-              <option value="anime style, cel shaded, detailed background, studio anime quality">Anime</option>
-              <option value="2D flat vector illustration, clean lines, bold flat colors">2D cartoon / flat</option>
-              <option value="cyberpunk, neon lighting, futuristic, high detail, atmospheric">Cyberpunk / Neon</option>
+              <option value="Roblox game screenshot, blocky Roblox avatar character with a rectangular blocky head, cylindrical arms and legs, shiny smooth plastic toy-like surfaces, simple low-poly blocky 3D, Roblox Studio render, bright even lighting, blocky 3D environment, looks exactly like the game Roblox, NOT realistic">Roblox niche</option>
+              <option value="dark cinematic horror scene, moody low-key lighting, deep shadows, fog, film grain, desaturated cold palette, unsettling creepy atmosphere, highly detailed">Horror niche</option>
+              <option value="eerie skeleton character, detailed anatomically correct white bones, dark moody cinematic background, dramatic horror rim lighting, subtle glow, highly detailed">Skeleton niche</option>
+              <option value="3D CGI animated movie still, Pixar and DreamWorks 3D animation style, fully three-dimensional rounded characters, soft volumetric studio lighting, subsurface scattering, glossy textures, octane render, three-dimensional NOT flat NOT 2D">3D animated (Pixar-style)</option>
+              <option value="simple 3D animated explainer style, smooth rounded minimalist 3D characters, clean soft studio lighting, plain solid-color background, Pixar-like simple shapes, glossy 3D render, three-dimensional NOT 2D">3D explainer (ZackD-style)</option>
+              <option value="photorealistic cinematic photograph, shot on DSLR 50mm lens, realistic natural lighting, shallow depth of field, ultra-detailed, sharp, 8k">Cinematic / Photoreal</option>
+              <option value="high-quality anime key visual, Japanese anime illustration style, clean cel shading, expressive detailed eyes, vibrant, studio anime quality">Anime</option>
+              <option value="flat 2D cartoon illustration, bold clean black outlines, flat cel-shaded colors, vector art style, simple shapes">2D cartoon / flat</option>
+              <option value="cyberpunk scene, glowing neon lighting, futuristic rain-slicked city, reflective surfaces, high contrast, atmospheric, blade-runner aesthetic">Cyberpunk / Neon</option>
             </select></div>
             <div class="col"><label class="f">Size</label><select class="t" id="st_size">
               <option value="square">Square 1:1</option>
@@ -279,6 +284,11 @@
           <div class="btn-row"><button class="btn" id="y_go">Generate publishing kit</button></div></div>
         <div class="card"><h3>Kit <span class="copy" id="y_copy">copy</span></h3><div class="out" id="y_out">Your titles, description, tags and more will appear here.</div>
           <div class="btn-row"><button class="btn ghost sm" id="y_export">Export .txt</button></div></div>
+        <div class="card"><h3>🛡 AI-Slop Reviewer <span class="muted">— check before you upload</span></h3>
+          <p class="muted" style="font-size:13px;margin:4px 0 10px">Scores your current script against YouTube &amp; Meta's 2026 "inauthentic / mass-produced content" rules and gives you specific fixes so it doesn't get demonetized or buried.</p>
+          <div class="btn-row"><button class="btn" id="y_review">Review my video</button></div>
+          <div class="out" id="y_reviewout" style="margin-top:10px">Generate or send a script first (Script Builder → Send to video, or paste one), then run the review.</div>
+        </div>
         <div class="card"><h3>Thumbnail generator</h3>
           <div class="grp"><label class="f">Background scene</label><input class="t" id="t_bg" placeholder="shocked man, dark money vault, dramatic rim lighting"/></div>
           <div class="row">
@@ -345,6 +355,7 @@
           </div>
           <div class="grp"><label class="f">Image engine</label><select class="t" id="k_imgmodel">
             <option value="flux-free">Flux — free, no key (can be slow/unreliable when busy)</option>
+            <option value="pollinations-turbo">Flux Turbo — free, faster, lower detail (no key)</option>
             <option value="gemini-2.5-flash-image">Google Nano Banana — free ~500/day, uses your Gemini key (recommended)</option>
             <option value="gemini-3.1-flash-image">Nano Banana 2 — higher quality, paid (Gemini key)</option>
             <option value="gemini-3-pro-image-preview">Nano Banana Pro — top quality, paid (Gemini key)</option>
@@ -433,8 +444,8 @@ async function ai(prompt,btn,label){
 }
 
 /* images — Pollinations (free) */
-function imgUrl(prompt,w,h,seed){seed=seed||Math.floor(Math.random()*1e6);const enh=store.imgq!=="fast";
-  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}&model=flux&enhance=${enh}`;}
+function imgUrl(prompt,w,h,seed,model){seed=seed||Math.floor(Math.random()*1e6);const enh=store.imgq!=="fast";
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${w}&height=${h}&nologo=true&seed=${seed}&model=${model||"flux"}&enhance=${enh}`;}
 
 /* script prompt */
 function scriptPrompt(o){return `You are a professional short-form scriptwriter and storyboard artist. Write a ${o.len} ${o.tone.toLowerCase()} script about: "${o.topic}". Open with a strong ${o.hook.toLowerCase()} hook in the first scene. Exactly ${o.scenes} scenes. ${o.extra?("Extra direction: "+o.extra):""}
@@ -479,7 +490,9 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
           <button class="btn ghost sm" data-dl="${i}">⬇ Save img</button>
           <button class="btn ghost sm" data-say="${i}">▶ Voice</button>
           <label class="btn ghost sm" style="cursor:pointer">⬆ Upload voice<input type="file" accept="audio/*" data-up="${i}" style="display:none"/></label>
-          <button class="btn ghost sm" data-anim="${i}">Animate</button>
+          <button class="btn ghost sm" data-anim="${i}">Animate (paid)</button>
+          <button class="btn ghost sm" data-free="${i}">🎬 Free clip</button>
+          <button class="btn ghost sm" data-clr="${i}">🗑 Clear</button>
         </div></div>
         <div data-aud="${i}">${sceneAudio[i]?`<audio controls src="${sceneAudio[i]}" style="width:100%;margin-top:8px"></audio>`:""}</div>
         <div data-clip="${i}">${s.videoUrl?`<a class="dl" href="${s.videoUrl}" target="_blank" download>↓ Download clip ${i+1}</a>`:""}</div>
@@ -495,20 +508,24 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-say]',w).forEach(b=>b.onclick=e=>genSceneVoice(+e.target.dataset.say,e.target));
   $$('[data-up]',w).forEach(inp=>inp.onchange=e=>{const i=+e.target.dataset.up;const f=e.target.files[0];if(!f)return;if(sceneAudio[i])URL.revokeObjectURL(sceneAudio[i]);sceneAudio[i]=URL.createObjectURL(f);sceneAudioFile[i]=f;renderScenes();toast("Your voiceover is attached to scene "+(i+1));});
   $$('[data-anim]',w).forEach(b=>b.onclick=e=>animate(+e.target.dataset.anim,e.target));
+  $$('[data-free]',w).forEach(b=>b.onclick=e=>sceneFreeClip(+e.target.dataset.free,e.target));
+  $$('[data-clr]',w).forEach(b=>b.onclick=e=>clearMedia(+e.target.dataset.clr));
 }
 async function geminiImage(prompt,w,h){if(!store.geminiKey)throw new Error("Add your Gemini key in Settings");
   const model=(store.imgmodel&&store.imgmodel.startsWith("gemini"))?store.imgmodel:"gemini-2.5-flash-image";
   const ar=w&&h?(w>h?"wide 16:9 landscape":w<h?"vertical 9:16 portrait":"square"):"";
+  const parts=[{text:prompt+(ar?(", "+ar+" composition"):"")+(refImage?". Keep the character/style consistent with the provided reference image.":"")}];
+  if(refImage){const mm=refImage.match(/^data:(.*?);base64,(.*)$/);if(mm)parts.push({inlineData:{mimeType:mm[1],data:mm[2]}});}
   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${store.geminiKey}`,
-    {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts:[{text:prompt+(ar?(", "+ar+" composition"):"")}]}],generationConfig:{responseModalities:["IMAGE","TEXT"]}})});
+    {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contents:[{parts}],generationConfig:{responseModalities:["IMAGE","TEXT"]}})});
   if(!r.ok){let d="";try{d=(await r.json())?.error?.message||"";}catch(_){}throw new Error("Nano Banana "+r.status+(d?": "+d.slice(0,140):""));}
-  const j=await r.json();const parts=j.candidates?.[0]?.content?.parts||[];
-  for(const p of parts){if(p.inlineData&&p.inlineData.data)return "data:"+(p.inlineData.mimeType||"image/png")+";base64,"+p.inlineData.data;}
+  const j=await r.json();const ps=j.candidates?.[0]?.content?.parts||[];
+  for(const p of ps){if(p.inlineData&&p.inlineData.data)return "data:"+(p.inlineData.mimeType||"image/png")+";base64,"+p.inlineData.data;}
   throw new Error("No image returned (daily quota reached or safety block)");}
 async function resolveImg(prompt,w,h,seed){const m=store.imgmodel||"flux-free";
   if(m.startsWith("gemini")){if(store.geminiKey){try{return await geminiImage(prompt,w,h);}catch(e){toast(e.message+" — falling back to free Flux",true);}}else toast("Add a Gemini key in Settings to use Nano Banana — using free Flux",true);}
-  return imgUrl(prompt,w,h,seed);}
-let lockSeed=Math.floor(Math.random()*1e6);
+  return imgUrl(prompt,w,h,seed,(m==="pollinations-turbo")?"turbo":"flux");}
+let lockSeed=Math.floor(Math.random()*1e6);let refImage=null;
 function buildImgPrompt(raw){let p=raw;const lock=($("#v_lock")||{}).value.trim();if(lock)p=lock+". "+p;const sty=($("#v_style")||{}).value||"";if(sty)p=sty+". "+p;return p+", highly detailed, sharp focus, professional composition, no text, no watermark";}
 async function genImg(i,btn){const s=scenes[i];let raw=s.imagePrompt||s.narration;if(!raw){toast("Add an image prompt",true);return;}
   const p=buildImgPrompt(raw);const seed=(($("#v_seedlock")||{}).checked)?lockSeed:0;
@@ -519,7 +536,13 @@ function saveWork(){try{const sc=scenes.map(s=>({...s,imageUrl:String(s.imageUrl
 function loadWork(){try{const d=JSON.parse(localStorage.getItem("dk_work")||"null");if(!d)return;if(Array.isArray(d.scenes)&&d.scenes.length)scenes=d.scenes;if(d.script&&$("#s_out"))$("#s_out").textContent=d.script;if(d.pt&&$("#p_text"))$("#p_text").value=d.pt;if(d.pf&&$("#p_footer"))$("#p_footer").value=d.pf;if(d.pb&&$("#p_bg"))$("#p_bg").value=d.pb;if(d.cap&&$("#cap_out"))$("#cap_out").textContent=d.cap;}catch(_){}}
 setInterval(saveWork,8000);window.addEventListener("beforeunload",saveWork);
 $("#v_add").onclick=()=>{scenes.push(blank());renderScenes();};
-$("#v_imgall").onclick=()=>{scenes.forEach((s,i)=>genImg(i));renderScenes();toast("Images loading");};
+$("#v_imgall").onclick=async e=>{if(!scenes.length){toast("No scenes yet",true);return;}
+  const gem=(store.imgmodel||"").startsWith("gemini");
+  busy(e.target,true,gem?"Generating (paced for Nano Banana)…":"Generating…");
+  let ok=0;
+  for(let i=0;i<scenes.length;i++){if(scenes[i].imagePrompt||scenes[i].narration){await genImg(i);ok++;}
+    if(gem&&i<scenes.length-1)await new Promise(r=>setTimeout(r,6500));}
+  busy(e.target,false);toast(ok+" image"+(ok!==1?"s":"")+" done"+(gem?" (paced)":""));};
 $("#v_voice").onclick=e=>voiceoverAll(e.target);
 
 function chunkText(text,max){const sents=text.match(/[^.!?]+[.!?]*\s*/g)||[text];const out=[];let cur="";
@@ -631,7 +654,7 @@ async function buildVideo(btn){
     if(mch==="upload"){if(musicURL){musicEl=new Audio(musicURL);musicEl.loop=true;musicEl.crossOrigin="anonymous";const ms=ac.createMediaElementSource(musicEl);ms.connect(mg);}else toast("No music file uploaded — building without music",true);}
     else stopBed=makeBed(ac,mg,mch);
   }catch(_){}}
-  const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");
+  const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
   let stream;try{stream=canvas.captureStream(30);}catch(e){toast("Your browser can't record canvas video",true);busy(btn,false);return;}
   let tracks=[...stream.getVideoTracks()];if(dest)tracks=tracks.concat(dest.stream.getAudioTracks());
   const mixed=new MediaStream(tracks);
@@ -677,6 +700,8 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#lb").classList.r
 document.addEventListener("click",e=>{const t=e.target;if(t&&t.classList&&t.classList.contains("thumb")){const i=t.dataset.th;if(scenes[i]&&scenes[i].imageUrl)openLB(scenes[i].imageUrl);}});
 /* music upload */
 $("#v_musicfile").onchange=e=>{const f=e.target.files[0];if(!f)return;if(musicURL)URL.revokeObjectURL(musicURL);musicURL=URL.createObjectURL(f);$("#v_music").value="upload";toast("Music loaded: "+f.name);};
+$("#v_reffile").onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{refImage=rd.result;$("#v_refprev").src=refImage;$("#v_refprev").style.display="block";$("#v_refclear").style.display="inline-block";toast("Reference anchor set — works with the Nano Banana engine");};rd.readAsDataURL(f);};
+$("#v_refclear").onclick=()=>{refImage=null;$("#v_refprev").style.display="none";$("#v_refclear").style.display="none";$("#v_reffile").value="";toast("Reference cleared");};
 
 /* image studio — generate-only, recreate / upscale / download / free moving clip */
 function stSize(){const v=($("#st_size")||{}).value;return v==="landscape"?[1280,720]:v==="portrait"?[720,1280]:[1024,1024];}
@@ -688,8 +713,9 @@ async function studioGen(btn){
   busy(btn,false);toast(n+" image"+(n>1?"s":"")+" started — they finish loading in a few seconds");}
 function addGal(url,prompt,w,h){
   const out=$("#st_out");const c=document.createElement("div");c.className="gcard";
-  c.innerHTML=`<img src="${url}" loading="lazy" alt=""/><div class="ga"><button data-gdl>⬇ Save</button><button data-grc>↻ Recreate</button><button data-gup>⬆ Upscale 2×</button><button data-gmv>🎬 Clip</button></div>`;
+  c.innerHTML=`<img src="${url}" loading="lazy" alt=""/><div class="ga"><button data-gdl>⬇ Save</button><button data-grc>↻ Recreate</button><button data-gup>⬆ Upscale 2×</button><button data-gmv>🎬 Clip</button><button data-gdel>🗑 Delete</button></div>`;
   c.dataset.prompt=prompt;c.dataset.w=w;c.dataset.h=h;c.dataset.url=url;out.prepend(c);
+  c.querySelector("[data-gdel]").onclick=()=>{c.remove();toast("Deleted");};
   c.querySelector("img").onclick=()=>openLB(c.dataset.url);
   c.querySelector("[data-gdl]").onclick=()=>imgDownload(c.dataset.url);
   c.querySelector("[data-grc]").onclick=async e=>{busy(e.target,true,"…");try{const u=await resolveImg(c.dataset.prompt,+c.dataset.w,+c.dataset.h);c.dataset.url=u;c.querySelector("img").src=u;}catch(_){}busy(e.target,false);};
@@ -720,20 +746,26 @@ function parseMotion(t){t=(t||"").toLowerCase();if(!t.trim())return null;
   if(/zoom\s*out|pull|wider|dolly out|back away|reveal/.test(t))return "pull";
   if(/zoom\s*in|push|closer|into|dolly in|punch in|close up/.test(t))return "push";
   return null;}
-async function imgMotion(url,btn){if(btn)busy(btn,true,"Making clip…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
-  const W=img.width,H=img.height;const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");
-  let stream;try{stream=canvas.captureStream(30);}catch(_){toast("Recording not supported here",true);if(btn)busy(btn,false);return;}
+async function recordMotionClip(img,style,dur){const W=img.width,H=img.height;const canvas=document.createElement("canvas");canvas.width=W;canvas.height=H;const ctx=canvas.getContext("2d");ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
+  let stream;try{stream=canvas.captureStream(30);}catch(_){return null;}
   const mime=MediaRecorder.isTypeSupported("video/mp4")?"video/mp4":"video/webm";let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(_){rec=new MediaRecorder(stream);}
   const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};const stopped=new Promise(r=>rec.onstop=r);
-  const typed=parseMotion(($("#st_motionprompt")||{}).value);const sel=(($("#st_motion")||{}).value)||"auto";const allSt=["push","pull","panLR","panRL","panUD","panDU"];
-  const style=typed||(sel==="auto"?allSt[Math.floor(Math.random()*allSt.length)]:sel);
-  const dur=+(($("#st_cliplen")||{}).value)||5;
   rec.start(100);const t0=performance.now();
   await new Promise(res=>{(function f(){const t=(performance.now()-t0)/1000;if(t>=dur){res();return;}const e=t/dur;const ee=e<0.5?2*e*e:1-Math.pow(-2*e+2,2)/2;drawDynamic(ctx,img,W,H,ee,style);requestAnimationFrame(f);})();});
-  try{rec.stop();}catch(_){}await stopped;const ext=mime.indexOf("mp4")>-1?"mp4":"webm";const blob=new Blob(chunks,{type:mime});
-  if(!blob.size){toast("Clip produced no data",true);if(btn)busy(btn,false);return;}
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dagdagkita-moving-"+Date.now()+"."+ext;a.click();if(btn)busy(btn,false);toast("Moving clip downloaded ("+ext.toUpperCase()+" · "+style+")");
+  try{rec.stop();}catch(_){}await stopped;return {blob:new Blob(chunks,{type:mime}),ext:mime.indexOf("mp4")>-1?"mp4":"webm"};}
+async function imgMotion(url,btn){if(btn)busy(btn,true,"Making clip…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
+  const typed=parseMotion(($("#st_motionprompt")||{}).value);const sel=(($("#st_motion")||{}).value)||"auto";const allSt=["push","pull","panLR","panRL","panUD","panDU"];
+  const style=typed||(sel==="auto"?allSt[Math.floor(Math.random()*allSt.length)]:sel);const dur=+(($("#st_cliplen")||{}).value)||5;
+  const r=await recordMotionClip(img,style,dur);
+  if(!r||!r.blob.size){toast("Clip produced no data",true);if(btn)busy(btn,false);return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(r.blob);a.download="dagdagkita-moving-"+Date.now()+"."+r.ext;a.click();if(btn)busy(btn,false);toast("Moving clip downloaded ("+r.ext.toUpperCase()+" · "+style+")");
 }catch(_){toast("Clip failed",true);if(btn)busy(btn,false);}}
+async function sceneFreeClip(i,btn){const s=scenes[i];if(!s.imageUrl){toast("Generate the image first",true);return;}
+  if(btn)busy(btn,true,"Free clip…");try{const img=await loadImg(s.imageUrl);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
+    const style=parseMotion(s.motionPrompt)||"push";const r=await recordMotionClip(img,style,5);
+    if(r&&r.blob.size){if(s.videoUrl&&s.videoUrl.startsWith("blob:"))URL.revokeObjectURL(s.videoUrl);s.videoUrl=URL.createObjectURL(r.blob);renderScenes();toast("Free clip ready for scene "+(i+1)+" ("+style+")");}else toast("Clip failed",true);
+  }catch(_){toast("Clip failed",true);}finally{if(btn)busy(btn,false);}}
+function clearMedia(i){const s=scenes[i];if(s.videoUrl&&s.videoUrl.startsWith("blob:"))URL.revokeObjectURL(s.videoUrl);s.imageUrl="";s.videoUrl="";renderScenes();saveWork();toast("Cleared media for scene "+(i+1));}
 $("#st_gen").onclick=e=>studioGen(e.target);
 
 /* thumbnail generator — AI background + bold readable headline overlay */
@@ -784,6 +816,24 @@ $("#y_go").onclick=async e=>{const t=$("#y_topic").value||"my video";
   $("#y_out").textContent=await ai(`For a YouTube video about "${t}", produce a publishing kit as plain text with sections: 5 TITLES, A 3-SECOND HOOK (one spoken opening line), DESCRIPTION (2 paragraphs, and end it with the line "Parts of this video were created with AI tools."), 15 HASHTAGS, 15 SEO KEYWORDS (comma separated), THUMBNAIL PROMPT, PINNED COMMENT, SHORTS CAPTION. No markdown.`,e.target,"Packaging…");};
 $("#y_copy").onclick=()=>{copy($("#y_out").textContent);toast("Copied");};
 $("#y_export").onclick=()=>dl("youtube-kit.txt",$("#y_out").textContent);
+$("#y_review").onclick=async e=>{
+  let txt=($("#s_out")||{}).textContent||"";
+  if(!txt.trim()&&scenes.length)txt=scenes.map((s,i)=>"Scene "+(i+1)+": "+(s.narration||"")).join("\n");
+  if(!txt.trim()){toast("Generate or send a script first",true);return;}
+  const local=[];
+  if(scenes.length&&scenes.length<3)local.push("Very few scenes — more distinct scenes lower the 'low-effort' signal.");
+  if(scenes.length){const same=scenes.every(s=>(s.caption||"").length<3);if(same)local.push("Captions look empty — on-screen text helps retention.");}
+  const review=await ai(`You are a strict YouTube and Meta monetization reviewer in 2026. Both platforms now demote or demonetize "inauthentic, mass-produced, repetitious" content: AI voiceover over images with no commentary, templated clones, and videos with no original human value. Review THIS video script and respond in plain text (no markdown) with exactly these sections:
+SLOP RISK SCORE: <a number 0-100 where lower is safer> — <Safe / Borderline / High risk>
+WHY: <2-3 short lines on what drives the score>
+TOP RISKS: <up to 4 short lines, the biggest flags>
+FIXES: <up to 5 concrete, specific edits to lower the risk for THIS script>
+ORIGINALITY BOOSTERS: <2-3 ways to add a unique human angle, opinion, or format twist>
+Be specific to this script, not generic.
+
+SCRIPT:
+${txt.slice(0,6000)}`,e.target,"Reviewing…");
+  $("#y_reviewout").textContent=(local.length?("Quick checks: "+local.join(" ")+"\n\n"):"")+review;};
 
 /* character */
 function renderChars(){const el=$("#c_list");if(!characters.length){el.innerHTML='<span class="muted">None yet.</span>';return;}
