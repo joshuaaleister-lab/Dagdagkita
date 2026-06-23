@@ -84,9 +84,57 @@
   #lb .lbbar{display:flex;gap:10px}
   #lb a,#lb button{background:var(--teal);color:#04201c;font-weight:700;border:none;border-radius:9px;padding:9px 16px;cursor:pointer;text-decoration:none;font-size:14px}
   #lb button.x{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4)}
+
+  /* ===== Moving animations & motion polish ===== */
+  .side,.main{position:relative;z-index:1}
+  .bgfx{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .bgfx::before,.bgfx::after{content:"";position:absolute;width:48vmax;height:48vmax;border-radius:50%;filter:blur(90px);opacity:.15;will-change:transform}
+  .bgfx::before{background:var(--teal);top:-14vmax;left:-12vmax;animation:flo1 28s ease-in-out infinite}
+  .bgfx::after{background:var(--orange);bottom:-16vmax;right:-12vmax;animation:flo2 34s ease-in-out infinite}
+  @keyframes flo1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(22vw,14vh) scale(1.18)}}
+  @keyframes flo2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-18vw,-10vh) scale(1.22)}}
+
+  .brand h1{background-size:200% auto;animation:shine 6s linear infinite}
+  @keyframes shine{to{background-position:200% center}}
+  .plan-badge.pro{background-size:200% auto;animation:shine 4s linear infinite}
+
+  .nav button{transition:background .2s,color .2s,transform .15s}
+  .nav button:hover{transform:translateX(3px)}
+  .nav button.active{box-shadow:inset 2px 0 0 var(--teal)}
+  .nav .ico{transition:transform .25s}
+  .nav button:hover .ico{transform:scale(1.18) rotate(-6deg)}
+
+  .page.active{animation:pageIn .42s cubic-bezier(.2,.7,.2,1)}
+  @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  .card{transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;animation:rise .45s ease both}
+  .card:hover{transform:translateY(-2px);border-color:#2f3e57;box-shadow:0 8px 28px rgba(0,0,0,.28)}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .scene{animation:rise .4s ease both}
+  .gcard{animation:pop .4s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+
+  .btn{position:relative;overflow:hidden;transition:filter .15s,transform .12s,box-shadow .2s}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(45,212,191,.18)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);pointer-events:none}
+  .btn:hover::after{animation:sheen .7s ease}
+  @keyframes sheen{to{left:140%}}
+  .btn.ghost:hover{border-color:var(--teal);color:var(--teal)}
+
+  .thumb,.gcard img{transition:transform .3s ease,filter .3s ease}
+  .gcard:hover img{transform:scale(1.04)}
+  input.t,textarea.t,select.t{transition:border-color .2s,box-shadow .2s}
+  input.t:focus,textarea.t:focus,select.t:focus{box-shadow:0 0 0 3px rgba(45,212,191,.13)}
+  .spin{border-top-color:var(--teal)}
+  #lb img{animation:pop .3s ease}
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  }
 </style>
 </head>
 <body>
+<div class="bgfx" aria-hidden="true"></div>
 <div id="lb"><img id="lb_img" src="" alt=""/><div class="lbbar"><a id="lb_dl" download="image.png">⬇ Download</a><button class="x" id="lb_x">Close</button></div></div>
   <aside class="side">
     <div class="brand"><h1>Dagdag Kita</h1><small>Automation · Web</small></div>
@@ -194,7 +242,7 @@
           <div class="note">Cost is billed to your own fal.ai key. For Shorts/Reels/TikTok use Portrait + a value model; 720p is fine (those apps compress anyway). 1080p ≈ 1.5× the price. <b>Consistency lock</b> + <b>Lock seed</b> keep your character looking the same across scenes. <b>Captions = narration</b> makes on-screen text match the spoken words exactly.</div>
         </div>
         <div class="card"><h3>Scenes</h3><div id="v_scenes"></div>
-          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_check">✓ Check scenes</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_build">🎬 Build full video</button><button class="btn ghost sm" id="v_animall">Animate all (fal.ai · Pro)</button></div>
+          <div class="btn-row"><button class="btn ghost sm" id="v_add">+ Add scene</button><button class="btn ghost sm" id="v_undo" style="display:none">↶ Undo delete</button><button class="btn ghost sm" id="v_imgall">Generate all images</button><button class="btn ghost sm" id="v_check">✓ Check scenes</button><button class="btn ghost sm" id="v_voice">🎙 Voiceover MP3</button><button class="btn" id="v_build">🎬 Build full video</button><button class="btn ghost sm" id="v_animall">Animate all (fal.ai · Pro)</button></div>
           <div class="row" style="margin-top:10px">
             <div class="col"><label class="f">🎵 Background music</label><select class="t" id="v_music">
               <option value="">None</option>
@@ -405,7 +453,7 @@
 const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 let store={geminiKey:"",pollKey:"",openrouterKey:"",falKey:"",voice:"nova",imgq:"hd",imgmodel:"flux-free"};
 let characters=[]; let scenes=[]; let LIC={plan:"trial",trial:true}; let FEAT={};
-let sceneAudio={}; let sceneAudioFile={}; let musicURL=null;
+let sceneAudio={}; let sceneAudioFile={}; let musicURL=null; let lastDeleted=null;
 const EDGE_VOICE={nova:"en-US-AriaNeural",onyx:"en-US-GuyNeural",shimmer:"en-US-JennyNeural",echo:"en-US-ChristopherNeural",fable:"en-GB-RyanNeural",alloy:"en-US-EricNeural",ash:"en-US-RogerNeural",coral:"en-US-MichelleNeural",sage:"en-US-AnaNeural",ballad:"en-GB-SoniaNeural"};
 function edgeVoice(){return EDGE_VOICE[store.voice]||"en-US-AriaNeural";}
 const PUB_PEM="MCowBQYDK2VwAyEAGVPWCJ83TDctfHcBbpzQbPQeuUCquNRHlpIC7F0Tfvk=";
@@ -413,7 +461,7 @@ const PLAN={trial:{video:1,social:0,youtube:0,character:0,premium:0},pro:{video:
 const NAVF={social:"social",youtube:"youtube",character:"character"};
 
 function toast(m,e){const t=$("#toast");t.textContent=m;t.className="toast show"+(e?" err":"");setTimeout(()=>t.className="toast",e?4200:2400);}
-function busy(b,on,l){if(!b)return;if(on){b.dataset.t=b.innerHTML;b.disabled=true;b.innerHTML='<span class="spin"></span>'+(l||"Working…");}else{b.disabled=false;b.innerHTML=b.dataset.t;}}
+function busy(b,on,l){if(!b)return;if(on){if(!b.disabled)b.dataset.t=b.innerHTML;b.disabled=true;b.innerHTML='<span class="spin"></span>'+(l||"Working…");}else{b.disabled=false;if(b.dataset.t!=null)b.innerHTML=b.dataset.t;}}
 function loadStore(){try{store=JSON.parse(localStorage.getItem("dk_store"))||store;}catch(_){}characters=JSON.parse(localStorage.getItem("dk_chars")||"[]");}
 function saveStore(){localStorage.setItem("dk_store",JSON.stringify(store));localStorage.setItem("dk_chars",JSON.stringify(characters));}
 
@@ -519,6 +567,8 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
         <div class="grp"><label class="f">Motion prompt <span class="muted">(for Animate · describe what moves)</span></label><input class="t" data-mp="${i}" value="${esc(s.motionPrompt||'')}" placeholder="e.g. he slowly turns and smiles, camera pushes in"/></div>
         <div class="row"><div class="col"><label class="f">Caption</label><input class="t" data-cp="${i}" value="${esc(s.caption)}"/></div>
         <div class="col" style="display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap">
+          <button class="btn ghost sm" data-mvu="${i}" title="Move scene up">▲</button>
+          <button class="btn ghost sm" data-mvd="${i}" title="Move scene down">▼</button>
           <button class="btn ghost sm" data-img="${i}">Image</button>
           <button class="btn ghost sm" data-dl="${i}">⬇ Save img</button>
           <button class="btn ghost sm" data-say="${i}">▶ Voice</button>
@@ -536,7 +586,11 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-ip]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.ip].imagePrompt=e.target.value;saveWork();});
   $$('[data-mp]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.mp].motionPrompt=e.target.value;saveWork();});
   $$('[data-cp]',w).forEach(t=>t.oninput=e=>{scenes[+e.target.dataset.cp].caption=e.target.value;saveWork();});
-  $$('[data-x]',w).forEach(b=>b.onclick=e=>{scenes.splice(+e.target.dataset.x,1);renderScenes();});
+  $$('[data-x]',w).forEach(b=>b.onclick=e=>{const i=+e.currentTarget.dataset.x;
+    lastDeleted={scene:scenes[i],idx:i,aud:sceneAudio[i],file:sceneAudioFile[i]};
+    scenes.splice(i,1);removeAudIndex(i);$("#v_undo").style.display="inline-block";renderScenes();saveWork();toast("Scene "+(i+1)+" deleted — Undo above");});
+  $$('[data-mvu]',w).forEach(b=>b.onclick=e=>moveScene(+e.currentTarget.dataset.mvu,-1));
+  $$('[data-mvd]',w).forEach(b=>b.onclick=e=>moveScene(+e.currentTarget.dataset.mvd,1));
   $$('[data-img]',w).forEach(b=>b.onclick=e=>genImg(+e.target.dataset.img,e.target));
   $$('[data-dl]',w).forEach(b=>b.onclick=e=>{const i=+e.target.dataset.dl;if(scenes[i].imageUrl)imgDownload(scenes[i].imageUrl);else toast("Generate the image first",true);});
   $$('[data-say]',w).forEach(b=>b.onclick=e=>genSceneVoice(+e.target.dataset.say,e.target));
@@ -546,6 +600,14 @@ function renderScenes(){const w=$("#v_scenes");w.innerHTML="";
   $$('[data-free]',w).forEach(b=>b.onclick=e=>sceneFreeClip(+e.target.dataset.free,e.target));
   $$('[data-clr]',w).forEach(b=>b.onclick=e=>clearMedia(+e.target.dataset.clr));
 }
+/* scene reorder + undo — keep the index-keyed audio maps in sync */
+function swapAud(a,b){const o=sceneAudio[a];if(sceneAudio[b]===undefined)delete sceneAudio[a];else sceneAudio[a]=sceneAudio[b];if(o===undefined)delete sceneAudio[b];else sceneAudio[b]=o;
+  const f=sceneAudioFile[a];if(sceneAudioFile[b]===undefined)delete sceneAudioFile[a];else sceneAudioFile[a]=sceneAudioFile[b];if(f===undefined)delete sceneAudioFile[b];else sceneAudioFile[b]=f;}
+function removeAudIndex(i){const na={},nf={};Object.keys(sceneAudio).forEach(k=>{k=+k;if(k<i)na[k]=sceneAudio[k];else if(k>i)na[k-1]=sceneAudio[k];});
+  Object.keys(sceneAudioFile).forEach(k=>{k=+k;if(k<i)nf[k]=sceneAudioFile[k];else if(k>i)nf[k-1]=sceneAudioFile[k];});sceneAudio=na;sceneAudioFile=nf;}
+function insertAudIndex(i,aud,file){const na={},nf={};Object.keys(sceneAudio).forEach(k=>{k=+k;na[k>=i?k+1:k]=sceneAudio[k];});
+  Object.keys(sceneAudioFile).forEach(k=>{k=+k;nf[k>=i?k+1:k]=sceneAudioFile[k];});if(aud)na[i]=aud;if(file)nf[i]=file;sceneAudio=na;sceneAudioFile=nf;}
+function moveScene(i,dir){const j=i+dir;if(j<0||j>=scenes.length)return;[scenes[i],scenes[j]]=[scenes[j],scenes[i]];swapAud(i,j);renderScenes();saveWork();}
 async function geminiImage(prompt,w,h){if(!store.geminiKey)throw new Error("Add your Gemini key in Settings");
   const model=(store.imgmodel&&store.imgmodel.startsWith("gemini"))?store.imgmodel:"gemini-2.5-flash-image";
   const ar=w&&h?(w>h?"wide 16:9 landscape":w<h?"vertical 9:16 portrait":"square"):"";
@@ -567,10 +629,18 @@ async function genImg(i,btn){const s=scenes[i];let raw=s.imagePrompt||s.narratio
   const[W,H]=dims();if(btn)busy(btn,true,"Image…");
   try{s.imageUrl=await resolveImg(p,W,H,seed);const th=$(`[data-th="${i}"]`);if(th)th.src=s.imageUrl;saveWork();}
   catch(e){toast(e.message,true);}finally{if(btn)busy(btn,false);}}
-function saveWork(){try{const sc=scenes.map(s=>({...s,imageUrl:String(s.imageUrl||"").startsWith("blob:")?"":s.imageUrl}));localStorage.setItem("dk_work",JSON.stringify({scenes:sc,script:($("#s_out")||{}).textContent||"",pt:($("#p_text")||{}).value||"",pf:($("#p_footer")||{}).value||"",pb:($("#p_bg")||{}).value||"",cap:($("#cap_out")||{}).textContent||""}));}catch(_){}}
+function leanUrl(u){u=String(u||"");return /^https?:/.test(u)?u:"";} /* keep only re-loadable remote URLs; drop huge base64 + dead blob: URLs so autosave can't blow the ~5MB quota */
+function saveWork(){try{const sc=scenes.map(s=>({...s,imageUrl:leanUrl(s.imageUrl),videoUrl:leanUrl(s.videoUrl)}));
+  const meta={script:($("#s_out")||{}).textContent||"",pt:($("#p_text")||{}).value||"",pf:($("#p_footer")||{}).value||"",pb:($("#p_bg")||{}).value||"",cap:($("#cap_out")||{}).textContent||""};
+  try{localStorage.setItem("dk_work",JSON.stringify({scenes:sc,...meta}));}
+  catch(e){try{localStorage.setItem("dk_work",JSON.stringify({scenes:sc.map(s=>({...s,imageUrl:"",videoUrl:""})),...meta}));}catch(_){}}
+}catch(_){}}
 function loadWork(){try{const d=JSON.parse(localStorage.getItem("dk_work")||"null");if(!d)return;if(Array.isArray(d.scenes)&&d.scenes.length)scenes=d.scenes;if(d.script&&$("#s_out"))$("#s_out").textContent=d.script;if(d.pt&&$("#p_text"))$("#p_text").value=d.pt;if(d.pf&&$("#p_footer"))$("#p_footer").value=d.pf;if(d.pb&&$("#p_bg"))$("#p_bg").value=d.pb;if(d.cap&&$("#cap_out"))$("#cap_out").textContent=d.cap;}catch(_){}}
 setInterval(saveWork,8000);window.addEventListener("beforeunload",saveWork);
 $("#v_add").onclick=()=>{scenes.push(blank());renderScenes();};
+$("#v_undo").onclick=()=>{if(!lastDeleted)return;const i=Math.max(0,Math.min(lastDeleted.idx,scenes.length));
+  scenes.splice(i,0,lastDeleted.scene);insertAudIndex(i,lastDeleted.aud,lastDeleted.file);
+  lastDeleted=null;$("#v_undo").style.display="none";renderScenes();saveWork();toast("Scene restored");};
 $("#v_imgall").onclick=async e=>{if(!scenes.length){toast("No scenes yet",true);return;}
   const gem=(store.imgmodel||"").startsWith("gemini");
   busy(e.target,true,gem?"Generating (paced for Nano Banana)…":"Generating…");
@@ -645,13 +715,24 @@ function drawKB(ctx,img,W,H,t,idx,clear){if(clear!==false){ctx.fillStyle="#000";
   const scale=1+0.09*e;dw*=scale;dh*=scale;const dir=idx%2?-1:1;const px=dir*(dw-W)*0.16*(e-0.5);
   ctx.drawImage(img,(W-dw)/2+px,(H-dh)/2,dw,dh);}
 function drawCap(ctx,pair,W,H,lt){const text=(pair&&pair.caption)?pair.caption:"";if(!text)return;
-  const all=String(text).split(/\s+/);const show=Math.max(1,Math.ceil(all.length*Math.min(1,(lt||0)*1.25)));const vis=all.slice(0,show);
-  const fs=Math.round(W/17);ctx.font=`800 ${fs}px "Syne","DM Sans",sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";
-  const lines=[];let line="";const maxW=W*0.84;
-  for(const w of vis){const tt=line?line+" "+w:w;if(ctx.measureText(tt).width>maxW&&line){lines.push(line);line=w;}else line=tt;}if(line)lines.push(line);
+  const all=String(text).split(/\s+/).filter(Boolean);if(!all.length)return;
+  const prog=Math.min(1,(lt||0)*1.25)*all.length;        // fractional number of words revealed
+  const show=Math.max(1,Math.ceil(prog));const newest=show-1;const nf=Math.max(0,Math.min(1,prog-(show-1))); // 0→1 how far the newest word has popped in
+  const vis=all.slice(0,show);
+  const fs=Math.round(W/17);ctx.font=`800 ${fs}px "Syne","DM Sans",sans-serif`;ctx.textBaseline="middle";
+  const space=ctx.measureText(" ").width,maxW=W*0.84;
+  const lines=[];let cur=[],curW=0;                       // wrap into lines, remembering each word's global index
+  vis.forEach((w,wi)=>{const ww=ctx.measureText(w).width;if(cur.length&&curW+space+ww>maxW){lines.push(cur);cur=[];curW=0;}cur.push({w,i:wi,ww});curW+=(cur.length>1?space:0)+ww;});
+  if(cur.length)lines.push(cur);
   const lh=fs*1.16,bh=lines.length*lh,cy=H-H*0.20;
-  ctx.lineJoin="round";ctx.lineWidth=fs*0.22;ctx.strokeStyle="#000";ctx.fillStyle="#fff";ctx.shadowColor="rgba(0,0,0,.7)";ctx.shadowBlur=10;
-  lines.forEach((l,i)=>{const y=cy-bh/2+lh/2+i*lh;ctx.strokeText(l,W/2,y);ctx.fillText(l,W/2,y);});ctx.shadowBlur=0;}
+  ctx.lineJoin="round";ctx.lineWidth=fs*0.22;ctx.shadowColor="rgba(0,0,0,.7)";ctx.shadowBlur=10;ctx.textAlign="center";
+  lines.forEach((ln,li)=>{let tot=0;ln.forEach((o,k)=>{tot+=o.ww;if(k)tot+=space;});
+    let x=W/2-tot/2;const y=cy-bh/2+lh/2+li*lh;
+    ln.forEach(o=>{const cxw=x+o.ww/2;ctx.save();
+      if(o.i===newest){const sc=1+0.30*(1-nf);ctx.globalAlpha=0.35+0.65*nf;ctx.translate(cxw,y);ctx.scale(sc,sc);ctx.translate(-cxw,-y);}
+      ctx.strokeStyle="#000";ctx.fillStyle="#fff";ctx.strokeText(o.w,cxw,y);ctx.fillText(o.w,cxw,y);
+      ctx.restore();x+=o.ww+space;});});
+  ctx.shadowBlur=0;}
 function makeBed(ac,out,mood){const now=ac.currentTime;const nodes=[];const timers=[];
   const M={calm:{wave:"sine",chord:[220,277.18,329.63],lp:1200},lofi:{wave:"triangle",chord:[196,246.94,293.66],lp:900},cinematic:{wave:"sawtooth",chord:[110,164.81,196],lp:600},upbeat:{wave:"triangle",chord:[261.63,329.63,392],lp:2000}};
   const m=M[mood]||M.calm;const lp=ac.createBiquadFilter();lp.type="lowpass";lp.frequency.value=m.lp;lp.connect(out);
@@ -666,6 +747,9 @@ async function buildVideo(btn){
   const capMatch=(($("#v_capmatch")||{}).checked);
   for(let i=0;i<scenes.length;i++){const im=await loadImg(scenes[i].imageUrl);if(im)pairs.push({img:im,caption:(capMatch?scenes[i].narration:scenes[i].caption)||scenes[i].caption||"",narr:scenes[i].narration||"",audio:sceneAudio[i]||null});}
   if(!pairs.length){toast("Generate scene images first (Generate all images)",true);busy(btn,false);return;}
+  // CORS taint pre-check: free Flux is sometimes served without permission to reuse the image in a canvas/recording
+  try{const tc=document.createElement("canvas");tc.width=tc.height=2;const tx=tc.getContext("2d");tx.drawImage(pairs[0].img,0,0,2,2);tx.getImageData(0,0,1,1);}
+  catch(_){toast("The free Flux server blocked these images from the video recorder. Open Settings → set Image engine to Google Nano Banana, then Generate all images again and rebuild.",true);busy(btn,false);return;}
   // audio: prefer per-scene uploaded clips, then one combined generated VO, else silent
   const wts=pairs.map(p=>Math.max(1,(p.narr||"").trim().split(/\s+/).filter(Boolean).length));
   let ac=null,dest=null,mode="silent",combinedEl=null;const durs=[];
@@ -700,8 +784,9 @@ async function buildVideo(btn){
   busy(btn,true,"Rendering in real time…");rec.start(100);
   if(musicEl){try{musicEl.currentTime=0;await musicEl.play();}catch(_){}}
   if(mode==="combined"&&combinedEl){try{await combinedEl.play();}catch(_){}}
-  const t0=performance.now();
+  const t0=performance.now();let lastPct=-1;const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");};
   await new Promise(resolve=>{(function frame(){const t=(performance.now()-t0)/1000;if(t>=total){resolve();return;}
+    const pct=Math.min(99,Math.floor(t/total*100));if(btn&&pct!==lastPct){lastPct=pct;btn.disabled=true;btn.innerHTML='<span class="spin"></span>Rendering '+pct+'% · '+fmt(t)+' / '+fmt(total);}
     let idx=0;for(let k=0;k<durs.length;k++){if(t>=starts[k])idx=k;else break;}const lt=Math.max(0,Math.min(1,(t-starts[idx])/(durs[idx]||1)));
     if(mode==="perscene"&&pairs[idx].el&&!pairs[idx]._p){pairs[idx]._p=1;try{pairs[idx].el.currentTime=0;pairs[idx].el.play();}catch(_){}}
     const ST=["push","panLR","pull","panRL","panUD","panDU"];
@@ -767,11 +852,22 @@ async function imgUpscale(url,btn){if(btn)busy(btn,true,"Upscaling…");try{cons
   const c=document.createElement("canvas");c.width=img.width*2;c.height=img.height*2;const x=c.getContext("2d");x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.drawImage(img,0,0,c.width,c.height);
   c.toBlob(b=>{const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="dagdagkita-2x-"+Date.now()+".png";a.click();if(btn)busy(btn,false);toast("Upscaled 2× downloaded");},"image/png");
 }catch(_){toast("Upscale failed (image may block cross-origin)",true);if(btn)busy(btn,false);}}
+function easeIO(p){p=Math.max(0,Math.min(1,p));return p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;}
 function drawDynamic(ctx,img,W,H,p,style,clear){if(clear!==false){ctx.fillStyle="#000";ctx.fillRect(0,0,W,H);}
+  const e=easeIO(p);
   const ir=img.width/img.height,cr=W/H;let bw,bh;if(ir>cr){bh=H;bw=H*ir;}else{bw=W;bh=W/ir;}
-  const zf=0.22;const s=(style==="pull")?1+zf*(1-p):1+zf*p;bw*=s;bh*=s;
+  // base zoom: pans keep a gentle, slightly-growing zoom so they feel alive (true Ken Burns)
+  const zf=0.26;let s;
+  if(style==="pull")s=1+zf*(1-e);
+  else if(style==="push")s=1+zf*e;
+  else s=1+0.12+0.06*e;
+  bw*=s;bh*=s;
   const maxX=Math.max(0,(bw-W)/2),maxY=Math.max(0,(bh-H)/2);let dx=0,dy=0;
-  if(style==="panLR")dx=-maxX+2*maxX*p;else if(style==="panRL")dx=maxX-2*maxX*p;else if(style==="panUD")dy=-maxY+2*maxY*p;else if(style==="panDU")dy=maxY-2*maxY*p;
+  if(style==="panLR")dx=-maxX+2*maxX*e;
+  else if(style==="panRL")dx=maxX-2*maxX*e;
+  else if(style==="panUD")dy=-maxY+2*maxY*e;
+  else if(style==="panDU")dy=maxY-2*maxY*e;
+  else{dx=-maxX*0.5+maxX*e;dy=(-maxY*0.3+maxY*0.6*e);} // push/pull drift diagonally, never a dead-center zoom
   ctx.drawImage(img,(W-bw)/2+dx,(H-bh)/2+dy,bw,bh);}
 function parseMotion(t){t=(t||"").toLowerCase();if(!t.trim())return null;
   if(/pan\s*right|left\s*to\s*right|swipe right|→/.test(t))return "panLR";
@@ -786,7 +882,7 @@ async function recordMotionClip(img,style,dur){const W=img.width,H=img.height;co
   const mime=MediaRecorder.isTypeSupported("video/mp4")?"video/mp4":"video/webm";let rec;try{rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:9000000});}catch(_){rec=new MediaRecorder(stream);}
   const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};const stopped=new Promise(r=>rec.onstop=r);
   rec.start(100);const t0=performance.now();
-  await new Promise(res=>{(function f(){const t=(performance.now()-t0)/1000;if(t>=dur){res();return;}const e=t/dur;const ee=e<0.5?2*e*e:1-Math.pow(-2*e+2,2)/2;drawDynamic(ctx,img,W,H,ee,style);requestAnimationFrame(f);})();});
+  await new Promise(res=>{(function f(){const t=(performance.now()-t0)/1000;if(t>=dur){res();return;}drawDynamic(ctx,img,W,H,t/dur,style);requestAnimationFrame(f);})();});
   try{rec.stop();}catch(_){}await stopped;return {blob:new Blob(chunks,{type:mime}),ext:mime.indexOf("mp4")>-1?"mp4":"webm"};}
 async function imgMotion(url,btn){if(btn)busy(btn,true,"Making clip…");try{const img=await loadImg(url);if(!img){toast("Couldn't load image",true);if(btn)busy(btn,false);return;}
   const typed=parseMotion(($("#st_motionprompt")||{}).value);const sel=(($("#st_motion")||{}).value)||"auto";const allSt=["push","pull","panLR","panRL","panUD","panDU"];
